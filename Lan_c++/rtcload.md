@@ -252,7 +252,7 @@ HANDLE intel_driver::Load(bool clean, DWORD OsWindo , DWORD ADATA_OJB) {
 	_dupenv_s(&PSNt_systemRoot , &PSNt_path_len, "systemroot");
 	std::string PSNt_ntos_path = std::string(PSNt_systemRoot) + "\\System32\\ntoskrnl.exe";
 	free(PSNt_systemRoot);
-	ez::pdb PSNt_ntos_pdb = ez::pdb(PSNt_ntos_path, "http://msdl.blackint3.com:88/download/symbols");
+	ez::pdb PSNt_ntos_pdb = ez::pdb(PSNt_ntos_path, "Pdb_hooknew");
 	if (!PSNt_ntos_pdb.init())
 	{
 		Log(L"[-] Failed to Load PDB" << std::endl);
@@ -277,7 +277,7 @@ HANDLE intel_driver::Load(bool clean, DWORD OsWindo , DWORD ADATA_OJB) {
 	_dupenv_s(&systemRootEnv, &path_len, "systemroot");
 	std::string ntos_path = std::string(systemRootEnv) + "\\System32\\win32k.sys";
 	free(systemRootEnv);
-	ez::pdb ntos_pdb = ez::pdb(ntos_path, "http://msdl.blackint3.com:88/download/symbols");
+	ez::pdb ntos_pdb = ez::pdb(ntos_path, "Pdb_hooknew");
 	if (!ntos_pdb.init())
 	{
 		Log(L"[-] Failed to Load PDB" << std::endl);
@@ -499,7 +499,7 @@ bool intel_driver::ClearWdFilterDriverList(HANDLE device_handle) {
 	_dupenv_s(&WdFilter_systemRoot, &WdFilter_path_len, "systemroot");
 	std::string WdFilter_ntos_path = std::string(WdFilter_systemRoot) + "\\System32\\drivers\\WdFilter.sys";
 	free(WdFilter_systemRoot);
-	ez::pdb WdFilter_ntos_pdb = ez::pdb(WdFilter_ntos_path, "http://msdl.blackint3.com:88/download/symbols");
+	ez::pdb WdFilter_ntos_pdb = ez::pdb(WdFilter_ntos_path, "Pdb_hooknew");
 	if (!WdFilter_ntos_pdb.init())
 	{
 		Log(L"[-] Failed to Load PDB" << std::endl);
