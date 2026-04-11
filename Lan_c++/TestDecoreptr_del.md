@@ -146,3 +146,222 @@ typedef union  __declspec(intrin_type) __declspec(align(64)) __m512i {
 } __m512i;
 
 ```
+
+
+---
+Decore Don't test
+---
+```cpp
+
+struct SimdConsts
+{
+	__m128 A0;
+	__m128 B0;
+	__m128 DE0;
+	__m128 C090;
+};
+SimdConsts SetupKeyLavel(uintptr_t BaseWork)
+{
+	SimdConsts Out = {};
+	Out.A0 = driver.read< __m128>(BaseWork + AAOFF_A0);
+	Out.B0 = driver.read< __m128>(BaseWork + AAOFF_B0);
+	Out.DE0 = driver.read< __m128>(BaseWork + AAOFF_DE0);
+	Out.C090 = driver.read< __m128>(BaseWork + AAOFF_090);
+	return Out;
+}
+inline SimdConsts LoadConsts(uintptr_t base)
+{
+	SimdConsts c;
+
+	c.A0 = _mm_loadu_ps((float*)GET_PTR(base, OFF_A0));
+	c.B0 = _mm_loadu_ps((float*)GET_PTR(base, OFF_B0));
+	c.DE0 = _mm_loadu_ps((float*)GET_PTR(base, OFF_DE0));
+	c.C090 = _mm_loadu_ps((float*)GET_PTR(base, OFF_090));
+
+	return c;
+}
+inline __m128 NormalizeRotationEx(__m128 v, const SimdConsts& c)
+{
+	__m128 div = _mm_div_ps(v, c.A0);
+
+	__m128 i = _mm_cvtepi32_ps(_mm_cvttps_epi32(div));
+
+	__m128 sub = _mm_sub_ps(
+		v,
+		_mm_mul_ps(
+			_mm_xor_ps(
+				_mm_and_ps(
+					_mm_cmple_ps(c.B0,
+						_mm_and_ps(div, c.DE0)),
+					_mm_xor_ps(i, div)
+				),
+				i
+			),
+			c.A0
+		)
+	);
+
+	__m128 add = _mm_add_ps(c.A0, sub);
+
+	__m128 fix1 = _mm_xor_ps(
+		_mm_and_ps(_mm_xor_ps(add, sub),
+			_mm_cmple_ps(_mm_setzero_ps(), sub)),
+		add
+	);
+
+	__m128 fix2 = _mm_xor_ps(
+		_mm_and_ps(
+			_mm_xor_ps(_mm_sub_ps(fix1, c.A0), fix1),
+			_mm_cmplt_ps(c.C090, fix1)
+		),
+		fix1
+	);
+
+	return fix2;
+}
+
+uint64_t ReadChain(uint64_t base, const std::vector<uint64_t>& offsets)
+{
+	uint64_t result = driver.read<uint64_t>(base + offsets.at(0));
+	for (int i = 1; i < offsets.size(); i++) {
+		result = driver.read<uint64_t>(result + offsets.at(i));
+	}
+	return result;
+}
+uintptr_t DecodePointerSmart(uint64_t a, uint64_t b, uint64_t c = 0, uint64_t d = 0)
+{
+	uintptr_t candidates[] =
+	{
+		a, b, c, d,
+
+		a ^ b,
+		b ^ c,
+		c ^ d,
+
+		a + b,
+		b + c,
+		c + d,
+
+		a - b,
+		b - c,
+
+		(a ^ b ^ c),
+		(b ^ c ^ d)
+	};
+
+	for (auto& v : candidates)
+	{
+		v = NormalizePtrSmart(v);
+
+		if (v > 0x10000 && v < 0x7FFFFFFFFFFF)
+			return v;
+	}
+
+	return 0;
+}
+
+struct RootAllType
+{
+	uint64_t p1, p2, p3, p4 ;
+};
+uintptr_t GetbasicRootComponent(uintptr_t actor, uint32_t OffsetStart = 0x1C0)
+{
+	RootAllType Menbasic = driver.read<RootAllType>(actor + OffsetStart);
+	uintptr_t rc = DecodePointerSmart(Menbasic.p1, Menbasic.p2, Menbasic.p3, Menbasic.p4);
+	return rc;
+}
+
+uintptr_t GetRootComponent(uintptr_t actor ,uint32_t OffsetStart= 0x1C0)
+{ 
+	__m512i Men = driver.read<__m512i>(actor + OffsetStart);
+
+	 
+	uint64_t p1 = driver.read<uint64_t>(actor + OffsetStart);
+	uint64_t p2 = driver.read<uint64_t>(actor + (OffsetStart+8));
+	uint64_t p3 = driver.read<uint64_t>(actor + (OffsetStart + 16));
+	uint64_t p4 = driver.read<uint64_t>(actor + (OffsetStart + 24));
+
+	uintptr_t rc = DecodePointerSmart(p1, p2, p3, p4);
+
+	return rc;
+}
+
+
+std::vector<unsigned char> ReadBlockDecodedSmart(uint64_t addr, size_t size)
+{
+	std::vector<unsigned char> out(size);
+	if (!addr || size == 0) return out;
+
+	// อ่าน raw
+	driver.readmnew(addr, out.data(), (uint32_t)size);
+
+	// =========================
+	// 🔥 PASS: decode pointer chain
+	// =========================
+	for (size_t i = 0; i + 0x20 <= size; i += 8)
+	{
+		uint64_t a = *(uint64_t*)(&out[i + 0x00]);
+		uint64_t b = *(uint64_t*)(&out[i + 0x08]);
+		uint64_t c = *(uint64_t*)(&out[i + 0x10]);
+		uint64_t d = *(uint64_t*)(&out[i + 0x18]);
+
+		uintptr_t decoded = DecodePointerSmart(a, b, c, d);
+
+		if (decoded)
+		{
+			*(uintptr_t*)(&out[i]) = decoded;
+		}
+	}
+
+	// =========================
+	// 🔥 PASS: fallback (ของเดิมมึง)
+	// =========================
+	for (size_t i = 0; i + 8 <= size; i += 8)
+	{
+		uintptr_t v = *(uintptr_t*)(&out[i]);
+
+		if (v > 0x1000)
+		{
+			v = NormalizePtrSmart(v);
+			*(uintptr_t*)(&out[i]) = v;
+		}
+	}
+
+	return out;
+}
+
+uintptr_t DecodeBest(uint64_t a, uint64_t b, uint64_t c, uint64_t d)
+{
+	uintptr_t best = 0;
+	int scoreBest = 0;
+
+	uintptr_t tries[] =
+	{
+		a, b, c, d,
+		a ^ b, b ^ c, c ^ d,
+		a + b, b + c,
+		a ^ b ^ c,
+		b ^ c ^ d
+	};
+
+	for (auto t : tries)
+	{
+		t = NormalizePtrSmart(t);
+
+		int score = 0;
+
+		if (t > 0x10000) score++;
+		if ((t & 0xFFF) != 0) score++;
+		if ((t >> 40) != 0) score++;
+
+		if (score > scoreBest)
+		{
+			scoreBest = score;
+			best = t;
+		}
+	}
+
+	return best;
+}
+
+```
