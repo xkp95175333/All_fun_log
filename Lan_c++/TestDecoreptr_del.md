@@ -116,3 +116,33 @@ uintptr_t TrimTrailingNibble(uintptr_t addr)
 
 
 ```
+
+---
+Loacltype __m  SSE SSE2 SSE 4.1 AVX 2 
+---
+```cpp
+//128
+typedef union __declspec(intrin_type) __declspec(align(16)) __m128i {
+    __int8              m128i_i8[16];
+    __int16             m128i_i16[8];
+    __int32             m128i_i32[4];
+    __int64             m128i_i64[2];
+    unsigned __int8     m128i_u8[16];
+    unsigned __int16    m128i_u16[8];
+    unsigned __int32    m128i_u32[4];
+    unsigned __int64    m128i_u64[2];
+} __m128i;
+
+//512
+typedef union  __declspec(intrin_type) __declspec(align(64)) __m512i {
+    __int8              m512i_i8[64];
+    __int16             m512i_i16[32];
+    __int32             m512i_i32[16];
+    __int64             m512i_i64[8];
+    unsigned __int8     m512i_u8[64];
+    unsigned __int16    m512i_u16[32];
+    unsigned __int32    m512i_u32[16];
+    unsigned __int64    m512i_u64[8];
+} __m512i;
+
+```
