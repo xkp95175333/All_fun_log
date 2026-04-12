@@ -55,7 +55,11 @@ uint64_t SearchAOBUpdate(std::vector<BYTE> memoryData,const std::string aobPatte
 	}
 
 }
-
+uint64_t GetRipRelative(uint8_t* instr)
+{
+    int32_t offset = *(int32_t*)(instr + 3);
+    return (uint64_t)(instr + 7 + offset);
+}
 
 uint64_t CalculateUworldAddress(uint64_t Addr, uint64_t base) {
 	if (Addr == 0) return 0;
