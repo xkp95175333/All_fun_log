@@ -1190,5 +1190,102 @@ namespace Macro
 		return std::string(reinterpret_cast<const char*>(b.data()),
 			reinterpret_cast<const char*>(b.data() + b.size()));
 	}
-}
-//enc namespace Macro
+
+	
+	static constexpr uint8_t ZeroCountTable[16] = {
+		4, // 0x0 → 0000 → 4 zeros
+		0, // 0x1
+		0, // 0x2
+		0, // 0x3
+		0, // 0x4
+		0, // 0x5
+		0, // 0x6
+		0, // 0x7
+		0, // 0x8
+		0, // 0x9
+		0, // 0xA
+		0, // 0xB
+		0, // 0xC
+		0, // 0xD
+		0, // 0xE
+		0  // 0xF
+	};
+	
+	// คืนจำนวน nibble zero จากล่างสุด โดยไม่มีลูป
+	 uint32_t CountTrailingZeroNibbles(uint64_t value40)
+	{
+		// nibble0
+		uint8_t n0 = (value40) & 0xF;
+		if (n0 != 0) return 0;
+	
+		// nibble1
+		uint8_t n1 = (value40 >> 4) & 0xF;
+		if (n1 != 0) return 1;
+	
+		// nibble2
+		uint8_t n2 = (value40 >> 8) & 0xF;
+		if (n2 != 0) return 2;
+	
+		// nibble3
+		uint8_t n3 = (value40 >> 12) & 0xF;
+		if (n3 != 0) return 3;
+	
+		// nibble4
+		uint8_t n4 = (value40 >> 16) & 0xF;
+		if (n4 != 0) return 4;
+	
+		// nibble5
+		uint8_t n5 = (value40 >> 20) & 0xF;
+		if (n5 != 0) return 5;
+	
+		// nibble6
+		uint8_t n6 = (value40 >> 24) & 0xF;
+		if (n6 != 0) return 6;
+	
+		// nibble7
+		uint8_t n7 = (value40 >> 28) & 0xF;
+		if (n7 != 0) return 7;
+	
+		// nibble8
+		uint8_t n8 = (value40 >> 32) & 0xF;
+		if (n8 != 0) return 8;
+	
+		// nibble9
+		uint8_t n9 = (value40 >> 36) & 0xF;
+		if (n9 != 0) return 9;
+	
+		return 10;
+	}
+	
+	 static inline uint32_t countptr0hot(uint64_t addr)
+	 {
+		 // 1) ตัดเหลือ 10 nibble ล่าง (40 bits)
+		 uint64_t v40 = addr & 0xFFFFFFFFFFULL;
+	
+		 // 2) หาจำนวน zero-nibble ท้ายสุดแบบไม่มีลูป
+		 uint32_t zeros = CountTrailingZeroNibbles(v40);
+		 retrun zeros;
+	
+	 }
+	
+	static inline uint64_t TrimLeadingNibb3231q1q2le(uint64_t addr)
+	{
+		// 1) ตัดเหลือ 10 nibble ล่าง (40 bits)
+		uint64_t v40 = addr & 0xFFFFFFFFFFULL;
+	
+		// 2) หาจำนวน zero-nibble ท้ายสุดแบบไม่มีลูป
+		uint32_t zeros = CountTrailingZeroNibbles(v40);
+	
+		// ถ้าไม่มีการ encode → คืนตามเดิม
+		if (zeros == 0)
+			return v40;
+	
+		// 3) ตัด x nibble จากท้าย (shift right)
+		uint32_t shiftBits = zeros * 4;
+		uint64_t decoded = (v40 >> shiftBits) & 0xFFFFFFFFFFULL;
+	
+		return decoded;
+	}
+	
+
+}//enc namespace Macro
