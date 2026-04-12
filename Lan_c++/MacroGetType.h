@@ -1257,16 +1257,16 @@ namespace Macro
 		return 10;
 	}
 	
-	 static inline uint32_t countptr0hot(uint64_t addr)
-	 {
-		 // 1) ตัดเหลือ 10 nibble ล่าง (40 bits)
-		 uint64_t v40 = addr & 0xFFFFFFFFFFULL;
-	
-		 // 2) หาจำนวน zero-nibble ท้ายสุดแบบไม่มีลูป
-		 uint32_t zeros = CountTrailingZeroNibbles(v40);
-		 retrun zeros;
-	
-	 }
+ static inline uint32_t countptr0hot(uint64_t addr)
+ {
+	 // 1) ตัดเหลือ 10 nibble ล่าง (40 bits)
+	 uint64_t v40 = addr & 0xFFFFFFFFFFULL;
+
+	 // 2) หาจำนวน zero-nibble ท้ายสุดแบบไม่มีลูป
+	 uint32_t zeros = CountTrailingZeroNibbles(v40);
+	 return zeros;
+
+ }
 	
 	static inline uint64_t TrimLeadingNibb3231q1q2le(uint64_t addr)
 	{
