@@ -80,13 +80,45 @@ uint64_t CalculateUworldAddress(uint64_t Addr, uint64_t base) {
 }
 
 //new
-uint64_t Calculatem128pAddress(uint64_t Addr, uint64_t base) {
+uint64_t Calculatem128pAddress(uint64_t Addr, uint64_t base,std::vector<BYTE> memoryData) {
 	if (Addr == 0) return 0;
+    uint64_t getBasememoryData = *(uint64_t*)memoryData[0];
+
+    
+    uint32_t OffsetAddrimm= Addr-(int)getBasememoryData;
+          if(OffsetAddrimm<1)OffsetAddrimm = Addr-(int)base;
+       if(memoryData[OffsetAddrimm]==0x48
+           && memoryData[OffsetAddrimm+1]==0x8B){
+
+        }
+       if(memoryData[OffsetAddrimm]==0xE8)
+          {
+
+           }
+       for(int i =0; i<0x100;++i){
+        if(memoryData[OffsetAddrimm+i]==0xCC
+         || memoryData[OffsetAddrimm+i]==0xC3)
+
+
+       }
+
+
+
+    
 	uint64_t addrtoUwrold = Addr + 3;
-    __m128i relativeData = driver.read128Ex2<__m128i>(addrtoUwrold);
+ //   __m128i relativeData = driver.read128Ex2<__m128i>(addrtoUwrold);
+
+    uint32_t OffsetAddropcore= addrtoUwrold-base;
+    
     
     
 	uint32_t relativeOffset = driver.read<uint32_t>(addrtoUwrold);
+    uint64_t paddropcore4 = addrtoUwrold + 4 + relativeOffset;
+    uint64_t paddropcore7 = addrtoUwrold + 7 + relativeOffset;
+
+
+    unsigned char buffer[0x500] = { 0 };
+
 	if (relativeOffset == 0) return 0;
 	return addrtoUwrold + 4 + relativeOffset;
 }
