@@ -10,10 +10,26 @@ struct DataoutAobSearch
 {
   uint64_t Paddrfound;
   int offsetmeni;
+  
+
   std::vector<BYTE> memoryDatatemp;
 };
 
   
+uint64_t GetRipRelative(uint8_t* instr)
+{
+    int32_t offset = *(int32_t*)(instr + 3);
+    return (uint64_t)(instr + 7 + offset);
+}
+
+uint64_t CalculateUworldAddress(uint64_t Addr, uint64_t base) {
+	if (Addr == 0) return 0;
+	uint64_t addrtoUwrold = Addr + 3;
+	uint32_t relativeOffset = driver.read<uint32_t>(addrtoUwrold);
+	if (relativeOffset == 0) return 0;
+	return addrtoUwrold + 4 + relativeOffset;
+}
+
 
 
 
@@ -65,19 +81,7 @@ uint64_t SearchAOBUpdate(std::vector<BYTE> memoryData,const std::string aobPatte
 	}
 
 }
-uint64_t GetRipRelative(uint8_t* instr)
-{
-    int32_t offset = *(int32_t*)(instr + 3);
-    return (uint64_t)(instr + 7 + offset);
-}
 
-uint64_t CalculateUworldAddress(uint64_t Addr, uint64_t base) {
-	if (Addr == 0) return 0;
-	uint64_t addrtoUwrold = Addr + 3;
-	uint32_t relativeOffset = driver.read<uint32_t>(addrtoUwrold);
-	if (relativeOffset == 0) return 0;
-	return addrtoUwrold + 4 + relativeOffset;
-}
 
 //new
 uint64_t Calculatem128pAddress(uint64_t Addr, uint64_t base) {
