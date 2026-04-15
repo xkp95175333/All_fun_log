@@ -155,5 +155,109 @@ void GetdataUpdate() {
 
 ```
 
+---
+new aiGen
+---
+```cpp
+
+struct AOBResult
+{
+    bool found = false;
+
+    uint64_t instrAddr = 0;   // จุดเจอ AOB (.text)
+    uint64_t ripAddr = 0;     // instr + 3
+    int32_t  relOffset = 0;   // displacement
+    uint64_t targetAddr = 0;  // address จริง (GNames/UWorld)
+    uint64_t finalOffset = 0; // offset = target - base
+};
+AOBResult SearchAOBEx(
+    const std::vector<BYTE>& memoryData,
+    const std::string& aobPattern,
+    uint64_t baseaddress)
+{
+    AOBResult result;
+
+    std::vector<uint8_t> pattern;
+    std::vector<bool> mask;
+
+    std::istringstream iss(aobPattern);
+    std::string byteStr;
+
+    while (iss >> byteStr)
+    {
+        if (byteStr == "??" || byteStr == "?")
+        {
+            pattern.push_back(0x00);
+            mask.push_back(false);
+        }
+        else
+        {
+            pattern.push_back((uint8_t)std::stoi(byteStr, nullptr, 16));
+            mask.push_back(true);
+        }
+    }
+
+    size_t patternSize = pattern.size();
+
+    for (size_t i = 0; i < memoryData.size() - patternSize; ++i)
+    {
+        bool found = true;
+
+        for (size_t j = 0; j < patternSize; ++j)
+        {
+            if (mask[j] && memoryData[i + j] != pattern[j])
+            {
+                found = false;
+                break;
+            }
+        }
+
+        if (found)
+        {
+            result.found = true;
+
+            // 📍 จุดเจอ instruction
+            result.instrAddr = baseaddress + i;
+
+            // 📍 RIP-relative decode
+            result.ripAddr = result.instrAddr + 3;
+            result.relOffset = *(int32_t*)(&memoryData[i + 3]);
+
+            result.targetAddr = result.instrAddr + 7 + result.relOffset;
+            result.finalOffset = result.targetAddr - baseaddress;
+
+            return result;
+        }
+    }
+
+    return result;
+}
+//UWorld
+auto resU = SearchAOBEx(UpdateAob::memoryData, AddrUworld, UpdateAob::baseaddress);
+
+if (resU.found)
+{
+    printf("UWorld instr: 0x%llX\n", resU.instrAddr);
+    printf("UWorld target: 0x%llX\n", resU.targetAddr);
+    printf("UWorld offset: 0x%llX\n", resU.finalOffset);
+
+    auto addrUworld = driver.read<uintptr_t>(resU.targetAddr);
+
+    UpdateAob::Uworld = resU.finalOffset;
+}
+//GNames
+
+auto resG = SearchAOBEx(UpdateAob::memoryData, AddrGname, UpdateAob::baseaddress);
+
+if (resG.found)
+{
+    printf("GNames instr: 0x%llX\n", resG.instrAddr);
+    printf("GNames target: 0x%llX\n", resG.targetAddr);
+    printf("GNames offset: 0x%llX\n", resG.finalOffset);
+
+    UpdateAob::Gname = resG.finalOffset;
+}
 
 
+
+```
