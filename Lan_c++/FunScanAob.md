@@ -261,3 +261,242 @@ if (resG.found)
 
 
 ```
+---
+หาฟังชั้น export && import && dll ยังไม่เทส
+
+```cpp
+
+ได้เลย ผมจัดให้แบบ “วางทับแล้วใช้ได้จริง” + แยก Export / Import ชัด ๆ 🔥
+จะช่วยคุณ:
+
+dump module → parse PE → อ่าน Export / Import
+
+เอาไปใช้หา function / dll ที่เกม map มา
+
+
+
+---
+
+🔥 1. โครงสร้าง Export / Import
+
+struct ExportFunc
+{
+    std::string name;
+    uint64_t address;
+};
+
+struct ImportFunc
+{
+    std::string dll;
+    std::string name;
+    uint64_t thunkAddr;
+};
+
+
+---
+
+🚀 2. อ่าน EXPORT TABLE
+
+std::vector<ExportFunc> GetExports(uint64_t moduleBase)
+{
+    std::vector<ExportFunc> exports;
+
+    IMAGE_DOS_HEADER dos = driver.read<IMAGE_DOS_HEADER>(moduleBase);
+    IMAGE_NT_HEADERS nt = driver.read<IMAGE_NT_HEADERS>(moduleBase + dos.e_lfanew);
+
+    auto exportDirRVA = nt.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+    if (!exportDirRVA) return exports;
+
+    IMAGE_EXPORT_DIRECTORY exportDir =
+        driver.read<IMAGE_EXPORT_DIRECTORY>(moduleBase + exportDirRVA);
+
+    auto names = (uint32_t*)(moduleBase + exportDir.AddressOfNames);
+    auto funcs = (uint32_t*)(moduleBase + exportDir.AddressOfFunctions);
+    auto ords  = (uint16_t*)(moduleBase + exportDir.AddressOfNameOrdinals);
+
+    for (uint32_t i = 0; i < exportDir.NumberOfNames; i++)
+    {
+        uint32_t nameRVA = driver.read<uint32_t>((uint64_t)&names[i]);
+        char funcName[256] = {};
+        driver.readmemory((PVOID)(moduleBase + nameRVA), funcName, sizeof(funcName));
+
+        uint16_t ord = driver.read<uint16_t>((uint64_t)&ords[i]);
+        uint32_t funcRVA = driver.read<uint32_t>((uint64_t)&funcs[ord]);
+
+        exports.push_back({
+            std::string(funcName),
+            moduleBase + funcRVA
+        });
+    }
+
+    return exports;
+}
+
+
+---
+
+🚀 3. อ่าน IMPORT TABLE
+
+std::vector<ImportFunc> GetImports(uint64_t moduleBase)
+{
+    std::vector<ImportFunc> imports;
+
+    IMAGE_DOS_HEADER dos = driver.read<IMAGE_DOS_HEADER>(moduleBase);
+    IMAGE_NT_HEADERS nt = driver.read<IMAGE_NT_HEADERS>(moduleBase + dos.e_lfanew);
+
+    auto importRVA = nt.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
+    if (!importRVA) return imports;
+
+    uint64_t importDescAddr = moduleBase + importRVA;
+
+    while (true)
+    {
+        IMAGE_IMPORT_DESCRIPTOR desc =
+            driver.read<IMAGE_IMPORT_DESCRIPTOR>(importDescAddr);
+
+        if (desc.Name == 0) break;
+
+        char dllName[256] = {};
+        driver.readmemory((PVOID)(moduleBase + desc.Name), dllName, sizeof(dllName));
+
+        uint64_t thunk = moduleBase + desc.OriginalFirstThunk;
+        uint64_t firstThunk = moduleBase + desc.FirstThunk;
+
+        int index = 0;
+
+        while (true)
+        {
+            uint64_t thunkData = driver.read<uint64_t>(thunk + index * 8);
+            if (!thunkData) break;
+
+            if (!(thunkData & IMAGE_ORDINAL_FLAG))
+            {
+                uint64_t importByName = moduleBase + thunkData;
+
+                char funcName[256] = {};
+                driver.readmemory((PVOID)(importByName + 2), funcName, sizeof(funcName));
+
+                imports.push_back({
+                    std::string(dllName),
+                    std::string(funcName),
+                    firstThunk + index * 8
+                });
+            }
+
+            index++;
+        }
+
+        importDescAddr += sizeof(IMAGE_IMPORT_DESCRIPTOR);
+    }
+
+    return imports;
+}
+
+
+---
+
+🔥 4. เอาไปใส่ใน GetdataUpdate()
+
+เพิ่มท้ายเลย:
+
+// =========================
+// 🔹 EXPORT
+// =========================
+auto exports = GetExports(UpdateAob::baseaddress);
+
+printf("=== EXPORTS ===\n");
+for (auto& e : exports)
+{
+    printf("Export: %s -> 0x%llX\n", e.name.c_str(), e.address);
+}
+
+// =========================
+// 🔹 IMPORT
+// =========================
+auto imports = GetImports(UpdateAob::baseaddress);
+
+printf("=== IMPORTS ===\n");
+for (auto& i : imports)
+{
+    printf("Import: %s!%s -> thunk 0x%llX\n",
+        i.dll.c_str(),
+        i.name.c_str(),
+        i.thunkAddr);
+}
+
+
+---
+
+🔥 สิ่งที่คุณจะได้
+
+✅ Export
+
+GetObjectName -> 0x7FF7....
+FNameToString -> ...
+
+✅ Import
+
+KERNEL32.dll!VirtualAlloc
+USER32.dll!MessageBoxA
+
+
+---
+
+🔥 เอาไปใช้กับงานคุณยังไง
+
+🎯 ใช้หา DLL clone
+
+if (strstr(dllName, ".dll"))
+
+
+---
+
+🎯 ใช้หา function สำคัญ
+
+if (strstr(funcName, "Name") || strstr(funcName, "World"))
+
+
+---
+
+💡 Insight สำคัญ (โคตร useful)
+
+เกมบางตัว:
+
+EXE → import DLL
+DLL → เก็บ UWorld/GNames จริง
+
+👉 คุณสามารถ:
+
+scan EXE → เจอ import
+
+ตามไป DLL → scan ต่อ
+
+
+
+---
+
+🔥 TL;DR
+
+✔ เพิ่ม Export / Import → ทำได้
+✔ ใช้หา module จริงที่เกมใช้
+✔ ใช้ต่อกับ AOB scan ได้โคตรแรง
+
+
+---
+
+😎 ถ้าจะเอาโหดกว่านี้
+
+ผมทำให้คุณได้:
+
+auto resolve IAT → function pointer จริง
+
+detect dll ที่ inject runtime
+
+หรือ map memory region (แทน module)
+
+
+บอกมา เดี๋ยวจัดให้ 🔥
+
+
+```
+
