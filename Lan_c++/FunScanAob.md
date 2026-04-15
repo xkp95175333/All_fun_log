@@ -79,7 +79,17 @@ uint64_t CalculateUworldAddress(uint64_t Addr, uint64_t base) {
 	return addrtoUwrold + 4 + relativeOffset;
 }
 
-
+//new
+uint64_t Calculatem128pAddress(uint64_t Addr, uint64_t base) {
+	if (Addr == 0) return 0;
+	uint64_t addrtoUwrold = Addr + 3;
+    __m128i relativeData = driver.read128Ex2<__m128i>(addrtoUwrold);
+    
+    
+	uint32_t relativeOffset = driver.read<uint32_t>(addrtoUwrold);
+	if (relativeOffset == 0) return 0;
+	return addrtoUwrold + 4 + relativeOffset;
+}
 
 
 
