@@ -5,6 +5,16 @@
 
 
 ```h
+//new
+struct DataoutAobSearch
+{
+  uint64_t Paddrfound;
+  int offsetmeni;
+  std::vector<BYTE> memoryDatatemp;
+};
+
+  
+
 
 
 // ฟังก์ชันเปรียบเทียบไบต์
