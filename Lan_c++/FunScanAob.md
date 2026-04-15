@@ -106,7 +106,7 @@ namespace UpdateAob
 	uint32_t Gname = 0x173DB7C0;
 
 
-
+ 
 }
  
 void GetdataUpdate() {
