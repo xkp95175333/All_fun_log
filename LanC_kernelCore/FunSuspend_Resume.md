@@ -36,10 +36,32 @@ mainloop
 ฟังชั้นทำงาน
 ---
 ```cpp
+
 	NTSTATUS PsResumeProcess(PEPROCESS Process);
   NTSTATUS PsSuspendProcess(PEPROCESS Process);
 //
 
+class AutoAttachOffset {
+private:
+	KAPC_STATE apc_state = {};
+	PEPROCESS process = NULL ;
+	 
+public:
+	AutoAttachOffset(PEPROCESS targetProcess) : process(targetProcess) {
+
+		if (process) {
+			KeStackAttachProcess(process, &apc_state);
+		 
+		}
+	}
+
+	~AutoAttachOffset() {
+		if (process) {
+			 
+			KeUnstackDetachProcess(&apc_state);
+		}
+	}
+};
 
 NTSTATUS OffAutoSuspendProAttach(HANDLE processID) {
 	PEPROCESS targetProcess = nullptr;
