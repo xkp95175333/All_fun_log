@@ -944,6 +944,21 @@ auto reconstruct world graph
 ---
 
 ถ้านายอยากไปต่อขั้น “ไม่ต้อง AOB แล้ว → ใช้ graph หา world เอง” บอกได้ เดี๋ยวผมยกระดับให้เป็น reverse engine จริงเลย 🔥
+struct LogicWorldImm
+{
+	uint64_t hitAddress;
+
+	uint64_t instr_mov_def;      // mov rsi, cs:qword_xxx
+	uint64_t instr_mov_enc;      // movzx + xor chain
+
+	uint64_t def_world;          // qword_156A1DFB8
+	uint64_t enc_base;           // unk_156A1FFB8
+	uint8_t  enc_key;            // byte_156A1FFBF
+
+	uint64_t resolved_world;
+
+	bool isEncoded;
+};
 
 ```
 
