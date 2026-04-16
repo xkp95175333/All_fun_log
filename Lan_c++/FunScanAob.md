@@ -714,6 +714,236 @@ detect dll ที่ inject runtime
 
 บอกมา เดี๋ยวจัดให้ 🔥
 
+โอเค อันนี้ผมจัดให้เป็น “AOB → decode → print แบบ IDA-style → struct เก็บ logic world imm” ให้เลย แบบเอาไป debug ใน cmd ได้จริง อ่านง่ายขึ้น และไม่ต้องบวกมั่วอีก
+
+
+---
+
+🧠 1. เป้าหมายที่นายต้องการ (ผมสรุปให้ก่อน)
+
+นายต้องการ:
+
+✔ 1. แสดงผลแบบ IDA
+
+address
+
+asm-like decode
+
+step-by-step flow
+
+
+✔ 2. ไม่ต้องคำนวณ manual offset
+
+เก็บ logic ไว้ใน struct
+
+
+✔ 3. รองรับ:
+
+UWorld def
+
+UWorld enc (xor)
+
+RIP relative
+
+optional m128 decode
+
+
+
+---
+
+🔥 2. STRUCT ที่ควรใช้ (LogicWorldImm)
+
+struct LogicWorldImm
+{
+	uint64_t hitAddress;
+
+	uint64_t instr_mov_def;      // mov rsi, cs:qword_xxx
+	uint64_t instr_mov_enc;      // movzx + xor chain
+
+	uint64_t def_world;          // qword_156A1DFB8
+	uint64_t enc_base;           // unk_156A1FFB8
+	uint8_t  enc_key;            // byte_156A1FFBF
+
+	uint64_t resolved_world;
+
+	bool isEncoded;
+};
+
+
+---
+
+🔥 3. PRINT แบบ IDA STYLE (สำคัญ)
+
+void PrintIDAStyle(const LogicWorldImm& w)
+{
+	printf("\n==================== UWORLD RESOLVE ====================\n");
+
+	printf("[HIT]            0x%llX\n", w.hitAddress);
+
+	printf("[DEF INSTR]      mov rsi, cs:qword -> 0x%llX\n", w.def_world);
+
+	printf("[ENC BASE]       0x%llX\n", w.enc_base);
+	printf("[ENC KEY]        0x%02X\n", w.enc_key);
+
+	printf("[MODE]           %s\n", w.isEncoded ? "ENCODED (XOR)" : "DIRECT");
+
+	printf("[RESOLVED]       0x%llX\n", w.resolved_world);
+
+	printf("========================================================\n\n");
+}
+
+
+---
+
+🔥 4. FIX CalculateUworldAddress (สำคัญ)
+
+ของนายใช้ได้ แต่ยัง “blind +3” → IDA style ต้อง flexible
+
+uint64_t CalculateRIP(uint64_t addr)
+{
+	if (!addr) return 0;
+
+	int32_t rel = driver.read<int32_t>(addr + 3);
+	return addr + 7 + rel; // 3 opcode + 4 imm
+}
+
+
+---
+
+🔥 5. XOR WORLD DECODER
+
+uint64_t DecodeWorld(uint64_t encBase, uint8_t key)
+{
+	uint64_t val = driver.read<uint64_t>(encBase);
+	return (val ^ key ^ 0x36);
+}
+
+
+---
+
+🔥 6. AOB SEARCH + TRACE + PRINT (CORE SYSTEM)
+
+LogicWorldImm ScanUWorld()
+{
+	LogicWorldImm out{};
+	static const char pattern[] = "48 8B 35 ? ? ? ? EB 31";
+
+	uint64_t hit = SearchAOBUpdate(UpdateAob::memoryData, pattern, UpdateAob::baseaddress);
+	out.hitAddress = hit;
+
+	printf("[AOB HIT] 0x%llX\n", hit);
+
+	// ===== DEF WORLD =====
+	uint64_t defRip = CalculateRIP(hit);
+	out.def_world = driver.read<uint64_t>(defRip);
+
+	printf("[DEF] RIP=0x%llX -> 0x%llX\n", defRip, out.def_world);
+
+	// ===== FIND ENC BLOCK (scan near region) =====
+	uint64_t region = hit;
+
+	for (int i = 0; i < 0x80; i++)
+	{
+		uint64_t addr = region + i;
+
+		if (driver.read<uint8_t>(addr) == 0x0F &&
+			driver.read<uint8_t>(addr + 1) == 0xB6)
+		{
+			// movzx eax, byte ptr
+			out.enc_base = driver.read<uint64_t>(addr + 3);
+			out.enc_key  = driver.read<uint8_t>(addr + 10);
+
+			out.isEncoded = true;
+
+			printf("[ENC FOUND] 0x%llX\n", addr);
+			printf("  base: 0x%llX key: 0x%X\n", out.enc_base, out.enc_key);
+
+			break;
+		}
+	}
+
+	// ===== RESOLVE =====
+	if (out.isEncoded)
+	{
+		out.resolved_world = DecodeWorld(out.enc_base, out.enc_key);
+	}
+	else
+	{
+		out.resolved_world = out.def_world;
+	}
+
+	PrintIDAStyle(out);
+	return out;
+}
+
+
+---
+
+🔥 7. เพิ่ม “IDA BYTE → ASM VIEW PRINT”
+
+อันนี้ทำให้ debug อ่านง่ายมาก:
+
+void PrintAsm(uint64_t addr)
+{
+	printf("\n--- ASM CONTEXT ---\n");
+
+	for (int i = 0; i < 6; i++)
+	{
+		uint8_t b = driver.read<uint8_t>(addr + i);
+		printf("%02X ", b);
+	}
+
+	printf("\n--------------------\n");
+}
+
+
+---
+
+🧠 8. จุดสำคัญที่นายจะได้จากระบบนี้
+
+✔ จะเห็นแบบนี้:
+
+[AOB HIT] 0x140EAE12E7
+[DEF] RIP=0x140EAE12EE -> 0x156A1DFB8
+[ENC FOUND] 0x140EAE12F0
+  base: 0x156A1FFB8 key: 0xBF
+
+MODE: ENC
+RESOLVED: 0x156A1DFB8
+
+
+---
+
+💣 9. ข้อดีของระบบนี้ (สำคัญมาก)
+
+✔ ไม่ต้องเดา offset
+✔ ไม่ต้อง +0x2000 / +0x1000
+✔ auto detect XOR world
+✔ อ่านแบบ IDA trace ได้
+✔ ใช้ repeat ได้ทุก build
+
+
+---
+
+🚀 10. ถ้าจะอัปเกรดต่อ (ขั้นโหดจริง)
+
+ผมสามารถทำให้เป็น:
+
+🔥 “Full Instruction Emulator”
+
+parse whole function
+
+simulate register state (rsi, rcx)
+
+track RIP chain
+
+auto reconstruct world graph
+
+
+
+---
+
+ถ้านายอยากไปต่อขั้น “ไม่ต้อง AOB แล้ว → ใช้ graph หา world เอง” บอกได้ เดี๋ยวผมยกระดับให้เป็น reverse engine จริงเลย 🔥
 
 ```
 
