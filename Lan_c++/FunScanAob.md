@@ -1179,7 +1179,586 @@ zero filter = ใช้ detect noise region (แต่ต้อง refine เพ
 🔥 4. full “Dumper7-style external SDK builder”
 
 แค่บอกว่าอยากไปสายไหน เดี๋ยวผมจัด pipeline ให้ครบทั้งระบบเลย
+โอเค อันที่มึงเจอใน IDA นี่ “ไม่ใช่มี UWorld 2 ตัว” แต่เป็น มีหลายจุดที่ “decode UWorld ด้วย key ต่างกัน” มากกว่า 🔥
 
+พวกนี้:
+
+xor al, 0x36
+xor cl, 0x36
+...
+xor al, 0x37
+
+👉 คือ คนละ path / คนละ key / คนละ function
+👉 บางเกมมี:
+
+key A = 0x36
+
+key B = 0x37
+
+หรือใช้ context ต่างกัน
+
+
+
+---
+
+🧠 สรุปสั้นให้เลย
+
+มึงต้อง:
+
+❌ ไม่ใช่อ่าน 2 UWorld
+✅ แต่ต้อง “ลอง decode หลายแบบ แล้วเลือกอันที่ valid”
+
+
+---
+
+🔥 ปัญหาของโค้ดมึงตอนนี้
+
+ตอนนี้มึง:
+
+หา AOB → OK
+
+RIP → OK
+
+อ่าน pointer → OK
+
+
+❌ แต่ยังไม่ได้:
+
+ตรวจ decode
+
+scan multi pattern
+
+เก็บหลาย candidate
+
+
+
+---
+
+🚀 เป้าหมายใหม่ (ที่มึงต้องการ)
+
+👉 “Scan AOB ทั้งหมด → เก็บทุก candidate → decode → เลือกอันจริง”
+
+
+---
+
+⚡ โครงสร้างใหม่
+
+struct AOBResult
+{
+    uint64_t instrAddr;
+    uint64_t ripAddr;
+    uint64_t rawValue;
+
+    uint64_t decoded;
+
+    uint8_t key;
+    int method; // 0=none,1=xor,2=add,3=sub
+
+    int score;
+};
+
+
+---
+
+🔥 ฟังชัน Scan AOB ทั้งหมด (ไม่ใช่แค่ตัวแรก)
+
+std::vector<uint64_t> ScanAOBAll(
+    const std::vector<BYTE>& memory,
+    const std::string& pattern,
+    uint64_t base)
+{
+    std::vector<uint64_t> results;
+
+    std::vector<uint8_t> pat;
+    std::vector<bool> mask;
+
+    std::istringstream iss(pattern);
+    std::string byteStr;
+
+    while (iss >> byteStr)
+    {
+        if (byteStr == "?" || byteStr == "??")
+        {
+            pat.push_back(0);
+            mask.push_back(false);
+        }
+        else
+        {
+            pat.push_back((uint8_t)std::stoi(byteStr, nullptr, 16));
+            mask.push_back(true);
+        }
+    }
+
+    size_t sz = pat.size();
+
+    for (size_t i = 0; i < memory.size() - sz; i++)
+    {
+        bool found = true;
+
+        for (size_t j = 0; j < sz; j++)
+        {
+            if (mask[j] && memory[i + j] != pat[j])
+            {
+                found = false;
+                break;
+            }
+        }
+
+        if (found)
+            results.push_back(base + i);
+    }
+
+    return results;
+}
+
+
+---
+
+🔥 Decode + Score (หัวใจเลย)
+
+bool IsValidPtr(uint64_t p)
+{
+    return p > 0x10000 && p < 0x7FFFFFFFFFFF;
+}
+
+int ScoreUWorld(uint64_t ptr)
+{
+    int score = 0;
+
+    if (!IsValidPtr(ptr)) return 0;
+
+    // read persistent level
+    uint64_t lvl = driver.read<uint64_t>(ptr + 0x30);
+    if (IsValidPtr(lvl)) score += 50;
+
+    // read owning game instance
+    uint64_t gi = driver.read<uint64_t>(ptr + 0x190);
+    if (IsValidPtr(gi)) score += 50;
+
+    return score;
+}
+
+
+---
+
+🔥 Try decode ทุกแบบ
+
+AOBResult TryDecodeAll(uint64_t raw)
+{
+    AOBResult best{};
+    best.score = 0;
+
+    // NONE
+    {
+        int s = ScoreUWorld(raw);
+        if (s > best.score)
+        {
+            best = {0,0,raw,raw,0,0,s};
+        }
+    }
+
+    for (int k = 0; k < 256; k++)
+    {
+        uint64_t p;
+
+        p = raw ^ k;
+        int s1 = ScoreUWorld(p);
+        if (s1 > best.score)
+            best = {0,0,raw,p,(uint8_t)k,1,s1};
+
+        p = raw + k;
+        int s2 = ScoreUWorld(p);
+        if (s2 > best.score)
+            best = {0,0,raw,p,(uint8_t)k,2,s2};
+
+        p = raw - k;
+        int s3 = ScoreUWorld(p);
+        if (s3 > best.score)
+            best = {0,0,raw,p,(uint8_t)k,3,s3};
+    }
+
+    return best;
+}
+
+
+---
+
+💣 ฟังชันรวม: Scan UWorld แบบที่มึงต้องการ
+
+std::vector<AOBResult> ScanUWorldAll()
+{
+    std::vector<AOBResult> results;
+
+    const char* pattern = "48 8B 35 ? ? ? ? EB ?";
+
+    auto list = ScanAOBAll(UpdateAob::memoryData, pattern, UpdateAob::baseaddress);
+
+    for (auto instr : list)
+    {
+        uint64_t rip = CalculateUworldAddress(instr, driver.base_address);
+
+        if (!rip) continue;
+
+        uint64_t raw = driver.read<uint64_t>(rip);
+
+        auto res = TryDecodeAll(raw);
+
+        if (res.score > 80) // threshold
+        {
+            res.instrAddr = instr;
+            res.ripAddr = rip;
+            results.push_back(res);
+        }
+    }
+
+    return results;
+}
+
+
+---
+
+🔥 ใช้งาน
+
+auto list = ScanUWorldAll();
+
+for (auto& r : list)
+{
+    printf("UWorld candidate:\n");
+    printf(" instr: %p\n", r.instrAddr);
+    printf(" raw:   %p\n", r.rawValue);
+    printf(" final: %p\n", r.decoded);
+    printf(" key:   0x%X method:%d score:%d\n",
+        r.key, r.method, r.score);
+}
+
+
+---
+
+💀 ตอบคำถามมึงตรง ๆ
+
+❓ มี UWorld 2 ตัวไหม?
+
+👉 ❌ ไม่ใช่
+👉 ✔ มีหลาย “ทาง decode”
+
+
+---
+
+❓ 0x36 / 0x37 คืออะไร?
+
+👉 ✔ XOR key คนละ function
+👉 ✔ หรือใช้กับ register คนละตัว (al / cl)
+
+
+---
+
+❓ ต้องอ่าน 2 อันไหม?
+
+👉 ❌ ไม่ต้อง
+👉 ✔ ให้ “ลอง decode ทุกแบบ แล้วเลือกอันที่ valid”
+
+
+---
+
+🔥 ถ้าจะโหดขึ้นอีก (แนะนำมาก)
+
+✔ parse instruction ASM → extract key auto (ไม่ brute)
+
+✔ detect pattern:
+
+xor reg, imm8
+
+✔ build auto decrypt pipeline
+
+
+
+---
+
+🎯 สรุป
+
+มึงต้องเปลี่ยน mindset เป็น:
+
+👉 “ไม่ได้มี pointer เดียว”
+👉 “แต่มีหลาย encoding → ต้อง brute + score”
+
+
+---
+
+😎 ถ้ามึงจะไปต่อ
+
+กูทำให้ได้:
+
+🔥 auto extract XOR key จาก .text (ไม่ brute)
+
+🔥 detect encrypted struct ทั้ง memory
+
+🔥 full auto UWorld + Actor + Camera chain
+
+
+บอกมา เดี๋ยวจัดสาย reverse ลึก ๆ ให้เลย 🔥
+
+
+เข้าใจละ มึงอยาก “ยกระดับตัวอ่านเป็น SIMD จริง” โดยใช้
+driver.read128Ex2<__m128i> แล้ว แตก / วิเคราะห์หลาย type ในครั้งเดียว + เอาไปใช้กับ AOB / decode / scan ได้เลย
+
+เดี๋ยวจัดให้เป็น “framework SIMD scan + decode + classify” ที่เข้ากับของมึง 👇
+
+
+---
+
+🔥 1. Wrapper SIMD Read (ให้ใช้คล่อง)
+
+__forceinline __m128i Read128(uintptr_t addr)
+{
+    return driver.read128Ex2<__m128i>(addr);
+}
+
+__forceinline __m256i Read256(uintptr_t addr)
+{
+    return driver.read256Ex<__m256i>(addr); // ถ้ามี
+}
+
+
+---
+
+⚡ 2. แตก __m128i → ทุก type
+
+struct SIMD128View
+{
+    __m128i i;
+    __m128  f;
+
+    float   f32[4];
+    int32_t i32[4];
+    uint64_t u64[2];
+    uint8_t  u8[16];
+};
+
+SIMD128View Unpack(__m128i v)
+{
+    SIMD128View o{};
+    o.i = v;
+    o.f = _mm_castsi128_ps(v);
+
+    _mm_storeu_ps(o.f32, o.f);
+    _mm_storeu_si128((__m128i*)o.i32, v);
+
+    o.u64[0] = *(uint64_t*)&o.i32[0];
+    o.u64[1] = *(uint64_t*)&o.i32[2];
+
+    memcpy(o.u8, &v, 16);
+
+    return o;
+}
+
+
+---
+
+🔥 3. SIMD Validate (เร็วกว่า loop ปกติ)
+
+bool IsValidVec3_SIMD(__m128 v)
+{
+    __m128 min = _mm_set1_ps(-100000.f);
+    __m128 max = _mm_set1_ps(100000.f);
+
+    __m128 c1 = _mm_cmpgt_ps(v, min);
+    __m128 c2 = _mm_cmplt_ps(v, max);
+
+    int mask = _mm_movemask_ps(_mm_and_ps(c1, c2));
+
+    return (mask & 0x7) == 0x7;
+}
+
+
+---
+
+💣 4. SIMD Decode (ลอง XOR หลาย key ทีเดียว)
+
+🔥 trick: broadcast key
+
+__m128i DecodeXor(__m128i data, uint8_t key)
+{
+    __m128i k = _mm_set1_epi8(key);
+    return _mm_xor_si128(data, k);
+}
+
+
+---
+
+⚡ 5. brute key แบบ SIMD (เร็วขึ้น)
+
+int FindBestKey_SIMD(__m128i raw)
+{
+    int bestKey = 0;
+    int bestScore = 0;
+
+    for (int k = 0; k < 256; k++)
+    {
+        __m128i dec = DecodeXor(raw, (uint8_t)k);
+
+        auto v = Unpack(dec);
+
+        int score = 0;
+
+        if (IsValidVec3_SIMD(_mm_castsi128_ps(dec)))
+            score += 20;
+
+        if (v.u64[0] > 0x10000 && v.u64[0] < 0x7FFFFFFFFFFF)
+            score += 20;
+
+        if (score > bestScore)
+        {
+            bestScore = score;
+            bestKey = k;
+        }
+    }
+
+    return bestKey;
+}
+
+
+---
+
+🚀 6. ใช้กับ UWorld scan (SIMD version)
+
+void ScanUWorld_SIMD(uint64_t instr)
+{
+    uint64_t rip = CalculateUworldAddress(instr, driver.base_address);
+    if (!rip) return;
+
+    __m128i raw128 = Read128(rip);
+
+    // decode หา key
+    int key = FindBestKey_SIMD(raw128);
+
+    __m128i dec = DecodeXor(raw128, key);
+
+    auto v = Unpack(dec);
+
+    uint64_t uworld = v.u64[0];
+
+    if (uworld)
+    {
+        printf("UWorld SIMD: %p key=0x%X\n", uworld, key);
+    }
+}
+
+
+---
+
+🔥 7. Scan memory แบบ SIMD จริง
+
+void ScanRegionSIMD(uintptr_t base, size_t size)
+{
+    for (size_t i = 0; i < size; i += 0x10)
+    {
+        __m128i data = Read128(base + i);
+
+        // test decode
+        int key = FindBestKey_SIMD(data);
+
+        if (key == 0) continue;
+
+        __m128i dec = DecodeXor(data, key);
+
+        if (IsValidVec3_SIMD(_mm_castsi128_ps(dec)))
+        {
+            printf("Vec candidate @ %p key=%d\n", base + i, key);
+        }
+    }
+}
+
+
+---
+
+💀 8. รองรับ AVX2 (เร็ว x2)
+
+__m256i DecodeXor256(__m256i data, uint8_t key)
+{
+    __m256i k = _mm256_set1_epi8(key);
+    return _mm256_xor_si256(data, k);
+}
+
+👉 อ่าน 32 bytes ทีเดียว (struct ใหญ่ได้)
+
+
+---
+
+🔥 9. รวมเข้ากับ LogicTypeMemName ของมึง
+
+void LogicTypeMemName(uintptr_t addr, uint32_t offset)
+{
+    __m128i raw = Read128(addr + offset);
+
+    // decode
+    int key = FindBestKey_SIMD(raw);
+
+    __m128i dec = DecodeXor(raw, key);
+
+    auto v = Unpack(dec);
+
+    printf("----\n");
+    printf("addr: %p\n", addr + offset);
+    printf("key:  0x%X\n", key);
+
+    printf("f: %.2f %.2f %.2f %.2f\n",
+        v.f32[0], v.f32[1], v.f32[2], v.f32[3]);
+
+    printf("ptr: %p %p\n",
+        (void*)v.u64[0], (void*)v.u64[1]);
+}
+
+
+---
+
+🧠 Insight สำคัญ (ที่มึงกำลังเจอ)
+
+🔥 XOR 0x36 / 0x37 ใน IDA
+
+มึงสามารถ:
+
+👉 ใช้ SIMD brute → หา key อัตโนมัติ
+👉 ไม่ต้องไล่ ASM ทีละบรรทัด
+
+
+---
+
+🎯 สรุป
+
+ตอนนี้มึงได้:
+
+✔ อ่าน memory แบบ SIMD จริง (__m128i)
+
+✔ decode XOR ด้วย SIMD
+
+✔ brute key เร็ว
+
+✔ detect struct / pointer / vector
+
+✔ ใช้กับ UWorld / Actor / Camera ได้
+
+
+
+---
+
+🔥 ถ้าจะไปสุดจริง (แนะนำ)
+
+✔ ทำ __m512i scan (64 bytes/loop)
+
+✔ detect instruction → extract key (ไม่ brute)
+
+✔ build full “SIMD memory analyzer”
+
+
+
+---
+
+ถ้ามึงเอาต่อ กูจัดให้ได้:
+
+👉 “ดึง XOR key จาก ASM (.text) อัตโนมัติ”
+👉 หรือ “scan ทั้ง process แล้ว classify struct ทุกตัว”
+
+อันนั้นจะเป็นระดับ tool reverse เต็มตัวแล้ว 😎
 
 ```
 
