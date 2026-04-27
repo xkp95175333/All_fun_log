@@ -1,4 +1,57 @@
 ---
+ย้ายการทำงานจากUsermode ฟังชั้นที่ อยู่ในกลุ่มต้องสงสัยให้kernel ทำแทน 
+---
+//RtlQueryModuleInformation   IN Usermode  {#define GetModuleInformation        K32GetModuleInformation}
+
+#define EnumProcesses               K32EnumProcesses
+#define GetProcessMemoryInfo        K32GetProcessMemoryInfo
+#define GetModuleInformation        K32GetModuleInformation
+#define GetModuleBaseNameA          K32GetModuleBaseNameA
+#define GetModuleBaseNameW          K32GetModuleBaseNameW
+#define GetModuleFileNameExA        K32GetModuleFileNameExA
+#define GetModuleFileNameExW        K32GetModuleFileNameExW
+#define QueryWorkingSet             K32QueryWorkingSet
+#define QueryWorkingSetEx           K32QueryWorkingSetEx
+
+ 
+
+```cpp
+
+
+[0x48,0x89,0x5C,0x24,0x10,0x48,0x89,-]> [2436] 0xFFFFF804119CB8E0|Size:0x19 [Off:Rva:0x7CB8E0|0xFFFFD5609BB5B8E0] (): RtlQueryModuleInformation
+
+// RtlQueryModuleInformation only accepts record sizes 0x8 and 0x110.
+// UnitSize is treated as an unsigned selector, and the ModuleInformation
+// buffer layout depends on the selected record size.
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlQueryModuleInformation(
+    _Inout_ PULONG BufferSize,
+    _In_ ULONG UnitSize, // RTL_QUERY_MODULE_INFORMATION_RECORD_SIZE_*
+    _Out_writes_bytes_opt_(*BufferSize) PVOID ModuleInformation
+    );
+
+
+NTKERNELAPI
+BOOLEAN
+NTAPI
+ExEnumHandleTable(
+    _In_ PHANDLE_TABLE HandleTable,
+    _In_ PEX_ENUM_HANDLE_CALLBACK EnumHandleProcedure,
+    _Inout_ PVOID Context,
+    _Out_opt_ PHANDLE Handle
+    );
+
+
+```
+
+
+
+
+
+
+---
 Baise inject 
 ตรวจสอบตำแหน่องและ หาโครงสร้าง 
 --- 
