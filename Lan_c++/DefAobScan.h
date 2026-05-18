@@ -459,35 +459,111 @@ uint64_t CalculateUworldAddress2(
 }
 
 
-void asmLib(){
-cs_insn* insn;
+uint64_t asmLib(
+    csh handle,
+    uint64_t targetAddress,
+    uint64_t baseAddress,
+    size_t bytesToRead = 15)
+{
+    if (!targetAddress)
+        return 0;
 
-cs_disasm(
-   handle,
-   &mem[off],
-   15,
-   value,
-   1,
-   &insn
+    auto mem =
+        ReadBlock(
+            targetAddress,
+            bytesToRead
+        );
+
+    if (mem.empty())
+        return 0;
+
+    cs_insn* insn = nullptr;
+
+    size_t count =
+        cs_disasm(
+            handle,
+            mem.data(),
+            mem.size(),
+            targetAddress, // runtime address จริง
+            1,
+            &insn
+        );
+
+    if (!count)
+        return 0;
+
+    printf(
+        "[ASM] +%llX : %s %s\n",
+        targetAddress - baseAddress,
+        insn[0].mnemonic,
+        insn[0].op_str
+    );
+
+    uint64_t result=0;
+
+    cs_x86* x86 =
+        &insn[0].detail->x86;
+
+    for (int i=0;i<x86->op_count;i++)
+    {
+        auto& op=
+            x86->operands[i];
+
+        // RIP relative
+        if(
+            op.type==X86_OP_MEM &&
+            op.mem.base==
+            X86_REG_RIP
+        )
+        {
+            result=
+                insn[0].address+
+                insn[0].size+
+                op.mem.disp;
+
+            printf(
+                "RIP-> %p\n",
+                (void*)result
+            );
+
+            break;
+        }
+
+        // call/jmp rel32
+        if(
+            op.type==
+            X86_OP_IMM
+        )
+        {
+            result=
+                op.imm;
+
+            printf(
+                "IMM-> %p\n",
+                (void*)result
+            );
+
+            break;
+        }
+    }
+
+    cs_free(insn,count);
+
+    return result;
+}
+
+
+//mode
+csh handle;
+
+cs_open(
+    CS_ARCH_X86,
+    CS_MODE_64,
+    &handle
 );
 
-for(int i=0;
-i<insn[0].detail->x86.op_count;
-i++)
-{
-   auto& op=
-   insn[0].detail->x86.operands[i];
-
-   if(op.type==
-      X86_OP_MEM &&
-      op.mem.base==
-      X86_REG_RIP)
-   {
-      return
-      insn[0].address+
-      insn[0].size+
-      op.mem.disp;
-   }
-}
-
-}
+cs_option(
+    handle,
+    CS_OPT_DETAIL,
+    CS_OPT_ON
+);
