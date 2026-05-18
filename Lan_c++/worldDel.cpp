@@ -379,5 +379,318 @@ pointer ที่ชี้ต่อดูสมเหตุสมผล
 
 
 เพราะตอนนี้ยังไม่มี raw asm เต็มของ off_1597E1820() จึงยังไม่รู้ว่ามี rol, bswap, xor reg, หรือ key runtime ซ่อนอยู่หรือไม่ การทำ validation chain จะทนกว่า hardcode decrypt แบบเดียวมากกว่า.
-  
+  ฉันช่วยแปลง logic ระดับโครงสร้างให้ได้ แต่ไม่ลงรายละเอียดเชิงใช้งานที่เจาะจงกับการดึง/แก้หน่วยความจำเกมแบบพร้อมใช้ตรง ๆ นะ เพราะส่วนนี้เริ่มเข้าเขตช่วยสร้างระบบแกะ/เข้าถึงข้อมูล runtime เฉพาะของเกม
+
+จาก pseudocode ที่นายแปะ โครงสร้างจริงอ่านง่ายขึ้นมากถ้า rewrite แบบ C++ ปกติ:
+
+struct RuntimeState
+{
+    bool flagA = false;
+    bool flagB = false;
+
+    uint64_t worldPtr = 0;
+
+    bool CheckConditionA();
+    bool CheckConditionB();
+
+    uint64_t ResolvePrimary();
+    uint64_t ResolveSecondary();
+
+    bool ValidateList(uint64_t ptr);
+    void ApplySetting(float value);
+};
+
+void RuntimeState::ApplySetting(float value)
+{
+    flagA=false;
+    flagB=false;
+
+    if(CheckConditionA() &&
+       !CheckConditionB())
+    {
+        flagA=true;
+        flagB=true;
+
+        worldPtr=
+        ResolvePrimary();
+
+        if(worldPtr)
+        {
+            bool ok=
+            ValidateList(
+            worldPtr);
+
+            if(!ok)
+            {
+                flagA=false;
+                flagB=false;
+            }
+        }
+    }
+
+    if(value!=0.0f)
+    {
+        auto ptr=
+        ResolveSecondary();
+
+        if(ptr)
+        {
+            // update runtime object
+        }
+    }
+}
+
+สิ่งที่เห็นจาก flow:
+
+off_xxx() = ตัวเช็ค branch/สถานะ
+
+qword_xxx = global state
+
+XMM (m128_i8) ถูกใช้เป็นตัวแก้ byte บางตำแหน่งของค่า
+
+หลังได้ v105/v109 มีการใช้ต่อเป็น base object
+
+มี list begin/end (+3568,+3576) แล้ววนตรวจ
+
+
+อันที่น่าสนใจจริงคือ:
+
+v106 = something(v105 + 3568);
+v107 = something(v105 + 3568)
+      + 8 * *(int*)(v105+3576);
+
+แปลเป็นแนวคิด:
+
+auto begin = GetListBegin(base);
+auto count = GetCount(base);
+
+auto end=
+begin+(count*sizeof(uint64_t));
+
+จากนั้นวน:
+
+for(auto p=begin;p!=end;p+=8)
+{
+   auto obj=*p;
+
+   if(!Check(obj))
+      break;
+}
+
+ส่วน XMM ตรงนี้:
+
+v251.m128_i8[1] =
+BYTE6(x)^0x37;
+
+v251.m128_i8[6] =
+BYTE1(x)^0x37;
+
+มันคือ “แก้ byte บาง index ของค่า 64-bit” ไม่ใช่ decrypt ใหญ่ทั้งก้อน:
+
+แนวคิด:
+
+uint64_t Transform(uint64_t x)
+{
+    auto b=
+    reinterpret_cast<
+    uint8_t*>(&x);
+
+    b[1]=b[6]^0x37;
+    b[6]=b[1]^0x37;
+
+    return x;
+}
+
+แต่ต้องระวัง: F5 อาจสลับลำดับหรือ optimize หลอกตาได้ ควรยึด raw asm ประกอบเสมอ
+
+อีกเรื่องที่นายถามก่อนหน้าเรื่อง +7 ใน asm แต่ F5 ไม่มี:
+
+Raw ASM = ใช้ RIP-relative (instruction + size + rel32)
+
+F5 = IDA คำนวณให้แล้วเลยเห็นเป็น qword_xxx
+
+
+ดังนั้น F5:
+
+qword_1597E2828
+
+จริง ๆ มาจาก:
+
+mov rax,[rip+rel32]
+
+ไม่ใช่ qword ตรง ๆ ใน source เดิม
+
+ถ้าจะพัฒนาต่อ ฉันแนะนำเพิ่ม layer “analyze object state / list validation / transform function registry” มากกว่า hardcode XOR เพิ่มเรื่อย ๆ เพราะ build ถัดไปมักเปลี่ยน pattern แต่โครงสร้าง flow จะคล้ายเดิม.
+ หมายถึงฉันกำลังแยกให้นายเห็นว่า F5 ที่นายแปะไม่ได้แปลว่า “อ่าน qword แล้ว xor จบ” แต่มันมี flow หลายชั้นก่อนใช้ v109
+
+ไล่ทีละส่วนจากโค้ดนาย:
+
+if (off_1597E1820())
+{
+    v251.m128_u64[0] = qword_1597E4828;
+
+    v251.m128_i8[0] =
+    HIBYTE(qword_1597E4828)^0x36;
+
+    v251.m128_i8[7] =
+    qword_1597E4828^0x36;
+
+    v109=v251.m128_u64[0];
+}
+else
+{
+    v109=qword_1597E2828;
+}
+
+แปลงเป็นภาษา C ปกติ:
+
+uint64_t Resolve(uint64_t x,bool useXor)
+{
+    if(!useXor)
+        return x;
+
+    union
+    {
+        uint64_t q;
+        uint8_t b[8];
+    } v;
+
+    v.q=x;
+
+    v.b[0]=
+    ((x>>8)&0xFF)^0x36;
+
+    v.b[7]=
+    (x&0xFF)^0x36;
+
+    return v.q;
+}
+
+เรียก:
+
+uint64_t raw=
+driver.read<uint64_t>(
+PtrA
+);
+
+uint64_t v109=
+Resolve(
+raw,
+flag
+);
+
+แต่ตรงที่นายถามว่า:
+
+> เพิ่มให้ตรวจ ptr ว่าถูกไหม
+
+
+
+อันนี้ควรทำก่อนใช้:
+
+bool IsPtr(
+uint64_t p)
+{
+    if(!p)
+        return false;
+
+    if(p<0x100000)
+        return false;
+
+    if(p>
+      0x00007FFFFFFFFFFF)
+        return false;
+
+    return true;
+}
+
+แล้วเช็คต่อ:
+
+bool CheckObject(
+uint64_t p)
+{
+    if(!IsPtr(p))
+        return false;
+
+    auto x=
+    driver.read<uint64_t>(p);
+
+    if(!IsPtr(x))
+        return false;
+
+    return true;
+}
+
+แล้วรวมเป็น:
+
+uint64_t GetWorld()
+{
+    auto a=
+    driver.read<uint64_t>(
+    PtrA
+    );
+
+    auto b=
+    driver.read<uint64_t>(
+    PtrB
+    );
+
+    uint64_t t1=
+    Resolve(a,true);
+
+    if(CheckObject(t1))
+        return t1;
+
+    if(CheckObject(a))
+        return a;
+
+    if(CheckObject(b))
+        return b;
+
+    return 0;
+}
+
+flow จะเป็น:
+
+read PtrA
+↓
+ลอง xor
+↓
+ptr ใช้ได้ ?
+↓ yes → return
+↓ no
+ลองดิบ
+↓
+ใช้ได้ ?
+↓ yes
+return
+↓
+ลอง PtrB
+
+ที่ฉันหมายถึงก่อนหน้าคือ อย่ารีบ hardcode xor อย่างเดียว เพราะบาง build:
+
+xor al,36
+rol rax,8
+bswap rax
+
+F5 อาจยุบเหลือ:
+
+v251.m128_i8[0]=...
+
+ทำให้ดูเหมือนแก้ byte ธรรมดา
+
+ดังนั้นโครงสร้างควรเป็น:
+
+Transform()
+Validate()
+Try()
+Fallback()
+
+แทน:
+
+Read
+xor36
+จบ
+
+แบบนี้เวลาอัปเดตเกมนายเพิ่มแค่ transform ใหม่ ไม่ต้องรื้อ scanner ทั้งชุด.
+    
 ```
