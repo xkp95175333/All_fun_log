@@ -348,7 +348,14 @@ void GetdataOffset() {
 	printf(_("memoryData Size: %08X\n"), setupimguidebug::memoryData.size());
 
 
-	 
+	 static const char AobBuildID[] = "8B 05 ? ? ? ? 80 3D ? ? ? ? ? 75";
+	auto AddrBuild=SearchAOBFindUE(AobBuildID);
+     int32_t relBuildId=driver.read<int32_t>(AddrBuild+2);
+	uintptr_t buildAddr = AddrBuild + 6 + relBuildId;
+	uint32_t build = driver.read<uint32_t>(buildAddr);
+	
+
+	
 	static const char AobWorld[] = "48 8B 05 ? ? ? ? 48 8B 48 08 48 85 C9 74 52 8B 81";
 	static const char AobReplayInterface[] = "48 8D 0D ? ? ? ? 89 ? ? ? E8 ? ? ? ? 48 83 ? ? ? 48 8B 05"; 
 	static const char AobW2s[] = "48 89 5C 24 ? 55 56 57 48 83 EC 70 65 4C 8B 0c 25";
@@ -375,3 +382,4 @@ void GetdataOffset() {
 
 	setupimguidebug::memoryData.clear();
 };
+
