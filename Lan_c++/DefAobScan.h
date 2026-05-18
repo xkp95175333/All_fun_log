@@ -383,3 +383,111 @@ void GetdataOffset() {
 	setupimguidebug::memoryData.clear();
 };
 
+uint64_t CalculateUworldAddress2(
+    uint64_t value,
+    uint64_t base)
+{
+    if (!value)
+        return 0;
+
+    intptr_t off =
+        value - base;
+
+    if (off < 0)
+        return 0;
+
+    if ((off + 8) >=
+        setupimguidebug::memoryData.size())
+        return 0;
+
+    auto* mem =
+      setupimguidebug::memoryData.data();
+
+    uint8_t b0=mem[off+0];
+    uint8_t b1=mem[off+1];
+    uint8_t b2=mem[off+2];
+    uint8_t b3=mem[off+3];
+
+    int dispOffset=-1;
+
+    // mov rax,[rip+disp32]
+    if(b0==0x48 &&
+       b1==0x8B &&
+       b2==0x05)
+    {
+        dispOffset=3;
+    }
+
+    // lea rax,[rip+disp32]
+    else if(
+       b0==0x48 &&
+       b1==0x8D &&
+       b2==0x05)
+    {
+        dispOffset=3;
+    }
+
+    // call rel32
+    else if(
+        b0==0xE8)
+    {
+        dispOffset=1;
+    }
+
+    if(dispOffset==-1)
+    {
+        printf(
+          "unknown opcode %02X %02X %02X\n",
+          b0,b1,b2);
+
+        return 0;
+    }
+
+    int32_t rel=
+        *(int32_t*)
+        (&mem[off+dispOffset]);
+
+    uint64_t instr =
+        value;
+
+    uint64_t next =
+        instr+
+        dispOffset+
+        4;
+
+    return next+rel;
+}
+
+
+void asmLib(){
+cs_insn* insn;
+
+cs_disasm(
+   handle,
+   &mem[off],
+   15,
+   value,
+   1,
+   &insn
+);
+
+for(int i=0;
+i<insn[0].detail->x86.op_count;
+i++)
+{
+   auto& op=
+   insn[0].detail->x86.operands[i];
+
+   if(op.type==
+      X86_OP_MEM &&
+      op.mem.base==
+      X86_REG_RIP)
+   {
+      return
+      insn[0].address+
+      insn[0].size+
+      op.mem.disp;
+   }
+}
+
+}
