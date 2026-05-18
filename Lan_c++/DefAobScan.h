@@ -31,6 +31,81 @@ namespace setupimguidebug
 	std::vector<unsigned char> memoryData; //เก็บ bytes ทั้ง module[0] เฉพราะใน Process 
 
 }
+
+uint64_t SearchAOBFindUEnew(
+    const std::string& aobPattern)
+{
+    std::vector<uint8_t> pattern;
+    std::vector<bool> mask;
+
+    std::istringstream iss(aobPattern);
+    std::string byteStr;
+
+    while (iss >> byteStr)
+    {
+        if(byteStr=="?"||
+           byteStr=="??")
+        {
+            pattern.push_back(0);
+            mask.push_back(false);
+        }
+        else
+        {
+            pattern.push_back(
+                (uint8_t)strtoul(
+                    byteStr.c_str(),
+                    nullptr,
+                    16
+                )
+            );
+
+            mask.push_back(true);
+        }
+    }
+
+    if(pattern.empty())
+        return 0;
+
+    if(setupimguidebug::
+        memoryData.size()
+        <pattern.size())
+        return 0;
+
+    const size_t last=
+        setupimguidebug::
+        memoryData.size()
+        -
+        pattern.size();
+
+    for(size_t i=0;i<=last;i++)
+    {
+        bool found=true;
+
+        for(size_t j=0;
+            j<pattern.size();
+            j++)
+        {
+            if(mask[j] &&
+              setupimguidebug::
+              memoryData[i+j]
+              !=pattern[j])
+            {
+                found=false;
+                break;
+            }
+        }
+
+        if(found)
+        {
+            return
+            setupimguidebug::
+            baseaddress+i;
+        }
+    }
+
+    return 0;
+}
+
 uint64_t SearchAOBFindUE(const std::string aobPattern) {
 	std::vector<uint8_t> pattern;
 	std::vector<bool> mask;
@@ -68,7 +143,18 @@ uint64_t SearchAOBFindUE(const std::string aobPattern) {
 	}
 
 }
+uint64_t CalculateRip(uint64_t instructionAddress)
+{
+    if (!instructionAddress)
+        return 0;
 
+    int32_t rel =
+        driver.read<int32_t>(
+            instructionAddress + 3
+        );
+
+    return instructionAddress + 7 + rel;
+}
 
 uint64_t CalculateUworldAddress(uint64_t value, uint64_t base) {
 	if (value == 0) return 0;
