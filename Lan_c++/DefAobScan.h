@@ -105,6 +105,153 @@ uint64_t SearchAOBFindUEnew(
 
     return 0;
 }
+uint64_t SearchAOBFindUENew2(const std::string & aobPattern)
+{
+	std::vector<uint8_t> pattern;
+	std::vector<bool> mask;
+
+	std::istringstream iss(aobPattern);
+
+	std::string byteStr;
+
+	while (iss >> byteStr)
+	{
+		if (byteStr == "?" ||
+			byteStr == "??")
+		{
+			pattern.push_back(0);
+			mask.push_back(false);
+		}
+		else
+		{
+			pattern.push_back(
+				(uint8_t)strtoul(
+					byteStr.c_str(),
+					nullptr,
+					16
+				)
+			);
+
+			mask.push_back(true);
+		}
+	}
+
+	if (pattern.empty())
+		return 0;
+
+	if (pattern.size() >
+		setupimguidebug::memoryData.size())
+	{
+		return 0;
+	}
+
+	const size_t patternSize =
+		pattern.size();
+
+	const auto& mem =
+		setupimguidebug::memoryData;
+
+	for (size_t i = 0;
+		i <= mem.size()-patternSize;
+		++i)
+	{
+		bool found=true;
+
+		for (size_t j=0;
+			j<patternSize;
+			++j)
+		{
+			if (
+				mask[j] &&
+				mem[i+j]!=pattern[j]
+				)
+			{
+				found=false;
+				break;
+			}
+		}
+
+		if(found)
+		{
+			return
+				setupimguidebug::baseaddress
+				+i;
+		}
+	}
+
+	return 0;
+}
+auto valueworld =
+	SearchAOBFindUE(
+		AobWorld
+	);
+
+if (!valueworld)
+{
+	valueworld=
+	SearchAOBFindUE(
+"48 8B 05 ? ? ? ? 48 8B 48 08 48 85 C9 ? ?"
+	);
+}
+
+printf(
+_("world -> %llX\n"),
+valueworld
+);
+uint64_t CalculateRip(
+	uint64_t instructionAddress)
+{
+	int32_t rel=
+	driver.read<int32_t>(
+		instructionAddress+3
+	);
+
+	return instructionAddress
+		+7
+		+rel;
+}
+template<class T>
+T ReadCache(uint64_t address)
+{
+	if(address<
+		setupimguidebug::baseaddress)
+		return T{};
+
+	uint64_t offset=
+		address-
+		setupimguidebug::baseaddress;
+
+	if(offset+sizeof(T)>
+		setupimguidebug::memoryData.size())
+	{
+		return T{};
+	}
+
+	T val;
+
+	memcpy(
+		&val,
+		&setupimguidebug::
+		memoryData[offset],
+		sizeof(T)
+	);
+
+	return val;
+}
+uint64_t CalculateRipCache(
+	uint64_t instructionAddress)
+{
+	int32_t rel=
+	ReadCache<int32_t>(
+		instructionAddress+3
+	);
+
+	return
+		instructionAddress
+		+7
+		+rel;
+}
+
 
 uint64_t SearchAOBFindUE(const std::string aobPattern) {
 	std::vector<uint8_t> pattern;
