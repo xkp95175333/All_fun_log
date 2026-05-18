@@ -692,5 +692,226 @@ xor36
 จบ
 
 แบบนี้เวลาอัปเดตเกมนายเพิ่มแค่ transform ใหม่ ไม่ต้องรื้อ scanner ทั้งชุด.
-    
+    ได้ และจริง ๆ ถ้ามีนายมี ReadBlock() อยู่แล้ว การอ่านเป็น block ก่อนแล้วค่อย parse ใน RAM จะดีกว่ายิง driver.read<> ซ้ำ ๆ หลายครั้ง เพราะ:
+
+ลดจำนวน driver call
+
+ไม่เสี่ยงค่ากลางเปลี่ยนระหว่างอ่าน
+
+เอาไป dump ASM / Capstone ต่อได้
+
+ใช้กับ SSE __m128i, AVX2 ได้ง่าย
+
+
+จาก flow ที่นายไล่ มี 4 จุดที่มักต้องอ่าน:
+
+1. รอบ instruction ที่เจอ AOB
+
+
+2. global qword (qword_1597E4828)
+
+
+3. global qword (qword_1597E2828)
+
+
+4. object ที่ pointer ชี้ไป
+
+
+
+ขนาดที่แนะนำ:
+
+// รอบ AOB instruction
+auto asmBlock=
+ReadBlock(
+address,
+0x40
+);
+
+0x40 (64 bytes)
+
+เหตุผล:
+
+48 8B 05 ?? ?? ?? ??
+48 8B 48 08
+...
+
+ปกติ 40–60 byte พอเห็น flow หลาย instruction แล้ว
+
+
+---
+
+อ่าน global qword/XMM:
+
+auto qblock=
+ReadBlock(
+PtrA,
+0x20
+);
+
+0x20 = 32 bytes
+
+เพราะ:
+
+QWORD   = 8
+XMM     =16
+padding =เหลือ
+
+เวลาแปลง:
+
+uint64_t x=
+*(uint64_t*)
+qblock.data();
+
+__m128i v=
+*(__m128i*)
+qblock.data();
+
+
+---
+
+อ่าน object ที่ decrypt แล้ว:
+
+auto obj=
+ReadBlock(
+world,
+0x200
+);
+
+ประมาณ 0x100-0x200
+
+เพราะจากโค้ดนายมี:
+
+v105+3568
+v105+3576
+
+เท่ากับ:
+
+0xDF0
+0xDF8
+
+ดังนั้นถ้าจะดู field ลึกจริง:
+
+auto obj=
+ReadBlock(
+world,
+0x1200
+);
+
+เพราะ:
+
+0xDF8 + margin
+≈0x1200
+
+
+---
+
+ฉันทำ helper ให้เลย:
+
+struct CachedBlock
+{
+    uint64_t address=0;
+
+    std::vector<uint8_t>
+    data;
+
+    bool Read(
+    uint64_t addr,
+    size_t sz)
+    {
+        address=addr;
+
+        data=
+        ReadBlock(
+        addr,
+        sz
+        );
+
+        return
+        !data.empty();
+    }
+
+    template<class T>
+    T At(
+    size_t off=0)
+    {
+        if(off+
+        sizeof(T)>
+        data.size())
+        {
+            return T{};
+        }
+
+        return
+        *(T*)
+        (
+        data.data()
+        +off
+        );
+    }
+};
+
+ใช้:
+
+CachedBlock asm1;
+
+asm1.Read(
+valueworld,
+0x40
+);
+
+int32_t rel=
+asm1.At<int32_t>(
+3
+);
+
+uint64_t ptr=
+valueworld+
+7+
+rel;
+
+แล้ว:
+
+CachedBlock q;
+
+q.Read(
+ptr,
+0x20
+);
+
+uint64_t x=
+q.At<uint64_t>();
+
+__m128i xmm=
+q.At<__m128i>();
+
+ถ้าจะอ่าน object:
+
+CachedBlock obj;
+
+obj.Read(
+world,
+0x1200
+);
+
+auto count=
+obj.At<int>(
+3576);
+
+แทน:
+
+driver.read<int>(
+world+3576
+)
+
+ทุกครั้ง
+
+สรุปขนาดที่ใช้กับเคสนี้:
+
+AOB asm      : 0x40
+QWORD/XMM    : 0x20
+Object       : 0x1200
+Whole routine: 0x300
+
+และถ้าจะไล่ movaps xmm, movups xmm, pinsrb, pextrb จาก IDA log จริง ๆ 0x300 กำลังดี ไม่ใหญ่เกินไป.
+
 ```
