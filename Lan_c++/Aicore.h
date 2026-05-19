@@ -710,3 +710,237 @@ int main()
 * Cheat Engine Analyzer
 * Ghidra Mini Runtime
 * Binary Ninja Style Runtime
+
+
+
+//ชุดพัฒนา 2
+#include <capstone/capstone.h>
+#include <vector>
+#include <string>
+#include <sstream>
+
+struct Instruction
+{
+    uintptr_t Address{};
+    std::string Mnemonic;
+    std::string Operand;
+    std::vector<uint8_t> Bytes;
+
+    uintptr_t ResolvedAddress = 0; // [rip+xxx] หลังคำนวณ
+};
+
+class CapstoneRuntime
+{
+private:
+
+    csh m_Handle = 0;
+
+    uintptr_t m_ProcessBase = 0;
+
+public:
+
+    bool Initialize(
+        uintptr_t processBase = 0,
+        cs_arch customArch = CS_ARCH_X86,
+        cs_mode customMode = CS_MODE_64)
+    {
+        m_ProcessBase = processBase;
+
+        struct TryMode
+        {
+            cs_arch arch;
+            cs_mode mode;
+            bool skipData;
+        };
+
+        std::vector<TryMode> modes =
+        {
+            {customArch, customMode,false},
+
+            {CS_ARCH_X86,CS_MODE_64,false},
+            {CS_ARCH_X86,CS_MODE_64,true},
+
+            {CS_ARCH_X86,CS_MODE_32,false},
+            {CS_ARCH_X86,CS_MODE_32,true},
+
+            {CS_ARCH_X86,CS_MODE_16,false},
+        };
+
+        for (auto& m : modes)
+        {
+            if (m_Handle)
+            {
+                cs_close(&m_Handle);
+                m_Handle = 0;
+            }
+
+            if (cs_open(
+                m.arch,
+                m.mode,
+                &m_Handle) != CS_ERR_OK)
+            {
+                continue;
+            }
+
+            cs_option(
+                m_Handle,
+                CS_OPT_DETAIL,
+                CS_OPT_ON);
+
+            if (m.skipData)
+            {
+                cs_option(
+                    m_Handle,
+                    CS_OPT_SKIPDATA,
+                    CS_OPT_ON);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    void Shutdown()
+    {
+        if (m_Handle)
+        {
+            cs_close(&m_Handle);
+            m_Handle = 0;
+        }
+    }
+
+    std::vector<Instruction> Disassemble(
+        uintptr_t address,
+        const uint8_t* code,
+        size_t size)
+    {
+        std::vector<Instruction> result;
+
+        if (!m_Handle)
+            return result;
+
+        cs_insn* insn = nullptr;
+
+        size_t count =
+            cs_disasm(
+                m_Handle,
+                code,
+                size,
+                address,
+                0,
+                &insn);
+
+        for (size_t i = 0; i < count; i++)
+        {
+            Instruction inst;
+
+            inst.Address =
+                insn[i].address;
+
+            inst.Mnemonic =
+                insn[i].mnemonic;
+
+            inst.Operand =
+                insn[i].op_str;
+
+            inst.Bytes.assign(
+                insn[i].bytes,
+                insn[i].bytes +
+                insn[i].size);
+
+            //-------------------------------------
+            // RIP relative resolve
+            //-------------------------------------
+
+            if (insn[i].detail)
+            {
+                auto& x86 =
+                    insn[i].detail->x86;
+
+                for (uint8_t j = 0;
+                     j < x86.op_count;
+                     j++)
+                {
+                    auto& op =
+                        x86.operands[j];
+
+                    if (op.type !=
+                        X86_OP_MEM)
+                        continue;
+
+                    if (op.mem.base
+                        == X86_REG_RIP)
+                    {
+                        int64_t disp =
+                            op.mem.disp;
+
+                        uintptr_t nextInstr =
+                            insn[i].address +
+                            insn[i].size;
+
+                        uintptr_t realAddr =
+                            nextInstr +
+                            disp;
+
+                        inst.ResolvedAddress =
+                            realAddr;
+
+                        std::stringstream ss;
+
+                        ss
+                        << insn[i].op_str
+                        << " -> [0x"
+                        << std::hex
+                        << realAddr
+                        << "]";
+
+                        inst.Operand =
+                            ss.str();
+
+                        break;
+                    }
+                }
+            }
+
+            result.push_back(
+                std::move(inst));
+        }
+
+        cs_free(insn,count);
+
+        return result;
+    }
+};
+
+
+//ใช้แบบนี้:
+CapstoneRuntime cap;
+
+cap.Initialize(
+    driver.base_address
+);
+
+auto list=
+cap.Disassemble(
+    address,
+    buffer,
+    size);
+
+for(auto& x:list)
+{
+    printf(
+        "%llX  %s %s\n",
+        x.Address,
+        x.Mnemonic.c_str(),
+        x.Operand.c_str());
+
+    if(x.ResolvedAddress)
+    {
+        printf(
+            "real: %p\n",
+            (void*)x.ResolvedAddress);
+    }
+}
+
+
