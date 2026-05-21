@@ -57,6 +57,9 @@
 ---
 งานซ่อมแบตให้ บ้าน
 ---
+
+![1000009107](https://github.com/user-attachments/assets/23360c39-389a-4b61-b404-8e96af850160)
+
 ![1000009041](https://github.com/user-attachments/assets/d0a4025b-1bc7-493c-9e8f-aa1c8842eb37)
 
 ![1000009065](https://github.com/user-attachments/assets/ab1e63aa-38ba-4803-8e2a-0fd092738dc6)
