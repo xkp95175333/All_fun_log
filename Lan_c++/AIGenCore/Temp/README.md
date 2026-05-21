@@ -9,8 +9,6 @@
 
 
 
-<img width="4080" height="2296" alt="1000009096" src="https://github.com/user-attachments/assets/51ec0bb7-12db-4bde-acc1-38b847bb6d47" />
-<img width="2296" height="4080" alt="1000009095" src="https://github.com/user-attachments/assets/adc97578-63c9-4bf8-82bd-090ec3b45879" />
 
 ```c
 ถ้าจะเปิด PSU PC ให้ทำงานแบบไม่ต่อเมนบอร์ด (เอาไว้ใช้เป็นแหล่งจ่ายไฟ DIY) ของ KCAS-800W มันใช้มาตรฐาน ATX ทั่วไป สีสายแทบเหมือนกันหมด ไม่ต้องไล่วัดทีละเส้นเลย 
