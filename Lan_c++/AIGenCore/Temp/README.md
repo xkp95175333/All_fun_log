@@ -3,6 +3,7 @@
 ออกแบบวงจรอิเล็กจากของที่ไม่ได้ใช้มาเป็นแหล่งจ่ายไฟ Full
 ---
 <img width="720" height="1612" alt="1000009103" src="https://github.com/user-attachments/assets/f329068f-ec15-43da-b960-a96f24ce1d99" />
+<img width="720" height="1612" alt="1000009104" src="https://github.com/user-attachments/assets/44ff7a27-df05-4c39-aa78-ac8ca7f70d56" />
 
 
 
