@@ -22,6 +22,7 @@ spot Welder
 ---
 
 <img width="1536" height="1024" alt="1000009257" src="https://github.com/user-attachments/assets/865979e5-7dd2-4454-8a24-bee356d7ccfa" />
+<img width="1402" height="1122" alt="1000009264" src="https://github.com/user-attachments/assets/2bfc09ff-835c-4779-9c67-8764f3169747" />
 
 ---
 คายประจุแบต 
