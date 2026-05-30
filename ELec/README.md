@@ -1,3 +1,6 @@
+---
+AI ออกแบบทั้งหมด
+---
 
 ---
 สเต็ปอัพMini Dc
@@ -7,3 +10,20 @@
 ![1000009261](https://github.com/user-attachments/assets/21090ac3-dc83-4141-aa52-f78f39ba533d)
 
 
+<img width="1402" height="1122" alt="1000009259" src="https://github.com/user-attachments/assets/961c3088-792f-40c2-a081-2a449a3b1849" />
+
+---
+ชาร์จไร้สาย
+---
+![1000009262](https://github.com/user-attachments/assets/597c65da-1b3a-40b3-8c12-9c5c7c7994fe)
+
+---
+spot Welder
+---
+
+<img width="1536" height="1024" alt="1000009257" src="https://github.com/user-attachments/assets/865979e5-7dd2-4454-8a24-bee356d7ccfa" />
+
+---
+คายประจุแบต 
+---
+<img width="1536" height="1024" alt="1000009258" src="https://github.com/user-attachments/assets/a497bc15-48c6-4f0b-8bfb-cf5288f6b8dc" />
