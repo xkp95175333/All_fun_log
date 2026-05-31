@@ -26,7 +26,11 @@ spot Welder
 
 'Pc Power supply '
 <img width="1536" height="1024" alt="1000009267" src="https://github.com/user-attachments/assets/11fc30ec-3351-4bf2-836c-f1ef6f837619" />
+
+
+<img width="1331" height="1181" alt="1000009266" src="https://github.com/user-attachments/assets/a56347c0-b25f-48d9-8914-9b300cf327b0" />
 ```cpp
+
 /*
  DIY SPOT WELDER
  Arduino UNO + IR2110 + MOSFET
@@ -126,10 +130,8 @@ void firePulse()
 }
 
 
+
 ```
-
-<img width="1331" height="1181" alt="1000009266" src="https://github.com/user-attachments/assets/a56347c0-b25f-48d9-8914-9b300cf327b0" />
-
 
 ---
 HW-586 Lib เสริม Unload BP
