@@ -24,6 +24,11 @@ spot Welder
 <img width="1536" height="1024" alt="1000009257" src="https://github.com/user-attachments/assets/865979e5-7dd2-4454-8a24-bee356d7ccfa" />
 <img width="1402" height="1122" alt="1000009264" src="https://github.com/user-attachments/assets/2bfc09ff-835c-4779-9c67-8764f3169747" />
 
+'Pc Power supply '
+<img width="1536" height="1024" alt="1000009267" src="https://github.com/user-attachments/assets/11fc30ec-3351-4bf2-836c-f1ef6f837619" />
+<img width="1331" height="1181" alt="1000009266" src="https://github.com/user-attachments/assets/a56347c0-b25f-48d9-8914-9b300cf327b0" />
+
+
 ---
 HW-586 Lib เสริม Unload BP
 ---
