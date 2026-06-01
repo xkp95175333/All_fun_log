@@ -843,3 +843,319 @@ MOSFET spot welder board
 ```
 <img width="465" height="284" alt="1000009314" src="https://github.com/user-attachments/assets/66949483-6023-4e9e-bf09-f36931fbe858" />
 <img width="465" height="260" alt="1000009316" src="https://github.com/user-attachments/assets/57bd2c80-7128-4e13-bc0c-b18a746d2138" />
+
+
+---
+El
+---
+```md
+ถ้าคุณทำแนว:
+
+ซ่อม BMS
+
+USB-C
+
+controller
+
+บอร์ด 2 หน้า
+
+แบต
+
+MOSFET
+
+ลมร้อน
+
+
+จริงๆ “กาว/flux/สารเคมี” จะมีหลายสายมาก และแต่ละตัวหน้าที่คนละแบบเลย
+
+ผมสรุปเป็น “ชุดโต๊ะซ่อมครบ” ให้เลย
+
+
+---
+
+1. Flux (สำคัญสุด)
+
+แบบเหนียว Tacky Flux
+
+ใช้:
+
+ลมร้อน
+
+SMD
+
+USB-C
+
+PCB 2 หน้า
+
+
+ตัวนิยม
+
+AMTECH NC-559-ASM
+
+Mechanic XG-Z40
+
+RELIFE RL-559
+
+
+หน้าตา
+
+
+---
+
+2. Flux น้ำ
+
+ใช้:
+
+ลากตะกั่ว
+
+งานทั่วไป
+
+through-hole
+
+
+ข้อดี:
+
+ถูก
+
+ไหลง่าย
+
+
+ข้อเสีย:
+
+แห้งไว
+
+เป่าลมร้อนสู้ tacky ไม่ได้
+
+
+
+---
+
+3. Low Melt Alloy
+
+ตัวเทพถอดของยาก
+
+ใช้:
+
+USB-C
+
+ground plane
+
+HDMI
+
+BMS
+
+
+ตัวดัง
+
+ChipQuik
+
+
+หน้าตา
+
+
+---
+
+4. ตะกั่วบัดกรี
+
+แบบที่ควรมี
+
+63/37
+
+ดีที่สุดสายซ่อม
+
+ข้อดี:
+
+ละลายง่าย
+
+ไหลสวย
+
+ไม่หนืด
+
+
+ยี่ห้อดี
+
+Kester 63/37
+
+Mechanic HX-T100
+
+
+
+---
+
+5. Solder Paste
+
+ใช้:
+
+reflow
+
+stencil
+
+SMD ทั้งแผง
+
+
+ต้องแช่เย็นบางรุ่น
+
+
+---
+
+6. UV Mask
+
+กาวเขียว/ดำเคลือบบอร์ด
+
+ใช้:
+
+ซ่อมลายปริ้น
+
+กันลัดวงจร
+
+
+ตัวนิยม
+
+Mechanic UV Solder Mask
+
+
+หน้าตา
+
+
+---
+
+7. กาวแดงล็อกน็อต
+
+ใช้:
+
+กันคลาย
+
+spot welder
+
+โครงเครื่อง
+
+
+ตัวดัง
+
+Loctite 243
+
+
+
+---
+
+8. Silicone / RTV
+
+ใช้:
+
+ยึดสาย
+
+กันสั่น
+
+กันไฟรั่ว
+
+
+ดีสุดสายอิเล็กทรอนิกส์
+
+Neutral Cure RTV
+
+
+อย่าใช้กรดอะซิติกกับ PCB
+
+
+---
+
+9. Epoxy
+
+ใช้:
+
+ยึดหนัก
+
+ซ่อมพลาสติก
+
+ยึด heatsink
+
+
+ตัวดัง
+
+Araldite
+
+JB Weld
+
+
+
+---
+
+10. Thermal Paste
+
+ใช้:
+
+MOSFET
+
+regulator
+
+CPU
+
+
+ตัวดัง
+
+Arctic MX-4
+
+
+
+---
+
+11. Kapton Tape
+
+สำคัญมากกับลมร้อน
+
+ใช้:
+
+กันร้อน
+
+บังชิ้นส่วน
+
+
+หน้าตา
+
+
+---
+
+12. Copper Wick
+
+ดูดตะกั่ว
+
+ตัวดี
+
+Goot Wick
+
+Mechanic Solder Wick
+
+
+
+---
+
+ชุด “ควรมีจริง” ถ้าซ่อมบอร์ด
+
+ประเภท	ควรมี
+
+Flux	NC-559
+ตะกั่ว	63/37
+wick	Goot
+UV mask	Mechanic
+Kapton	10–20mm
+RTV	neutral cure
+Low melt	ChipQuik
+
+
+
+---
+
+ถ้าจะจัด “ชุดโต๊ะซ่อมคุ้มสุด”
+
+ผมจะเลือก:
+
+NC-559
+63/37 solder
+Copper wick
+Kapton tape
+UV mask
+ChipQuik
+
+แค่นี้ซ่อม BMS / USB-C / controller / PCB 2 หน้า ได้เกือบหมดแล้ว
+
+```
