@@ -322,3 +322,524 @@ same port ถ้าเดิมใช้ PC-
 
 
 ```
+---
+3
+---
+```md
+วงจรที่คุณคิด “แบต 2 ก้อน → boost เพิ่มแรงดัน → MOSFET spot welder” ทำได้ แต่ต้องเข้าใจก่อนว่า spot welder ต้องการ “กระแสสูงมากช่วงสั้นๆ” ไม่ใช่แค่แรงดันสูง
+
+ดังนั้น:
+
+Step-up ทั่วไปเพิ่ม V ได้จริง
+
+แต่ส่วนมาก “A ตก”
+
+ยิงไม่ติด หรือ MOSFET ระเบิด
+
+
+แนวที่ดีกว่าคือ:
+
+ใช้ 2S โดยตรง (7.4–8.4V)
+
+เพิ่ม capacitor bank
+
+ใช้ MOSFET low Rds(on)
+
+
+มากกว่าปั่นไฟขึ้นสูง
+
+
+---
+
+โครงสร้างที่ “ใช้งานได้จริง”
+
+18650 x2 (2S)
+   │
+ BMS 2S
+   │
+ Capacitor Bank
+   │
+ TVS Protection
+   │
+ MOSFET Bank
+   │
+ Copper Probe
+
+
+---
+
+ถ้าจะ “boost ไป 12V”
+
+ทำได้ แต่:
+
+ต้องใช้ boost ที่จ่าย 30–50A pulse
+
+XL6009 / MT3608 ไม่ไหว
+
+
+ต้องเล่น:
+
+XL4016
+
+LTC3780
+
+หรือ supercapacitor
+
+
+
+---
+
+แบบที่แนะนำจริงกว่า
+
+ใช้:
+
+2S high drain
+
+capacitor ช่วยยิง pulse
+
+
+แทนการ boost
+
+เพราะ:
+
+P = V x A
+
+ถ้า boost V สูง:
+
+กระแสฝั่งแบตจะพุ่งหนักกว่าเดิมอีก
+
+
+
+---
+
+วงจรแนะนำ (DIY ใช้ได้จริง)
+
+Battery
+
+ใช้:
+
+Samsung 25R
+
+Sony VTC5
+
+Molicel
+
+
+2 ก้อนแบบ 2S
+
+
+---
+
+BMS
+
+2S 20A–40A
+
+
+---
+
+Capacitor Bank
+
+เช่น:
+
+4700uF–22000uF Low ESR
+
+16V หรือ 25V
+
+
+ต่อขนานหลายตัว
+
+
+---
+
+MOSFET
+
+นิยม:
+
+เบอร์	ดี
+
+IRLB3034	ดีมาก
+HY4008	ถูก
+AOI518	แรง
+IRF1404	นิยม
+
+
+ต่อขนาน 4–8 ตัว
+
+
+---
+
+Driver
+
+ใช้:
+
+TC4420
+
+IR2110
+
+หรือ NE555 ยิง pulse
+
+
+
+---
+
+TVS Diode
+
+กัน spike:
+
+1.5KE15A
+
+SMBJ16A
+
+
+
+---
+
+สาย
+
+ต้องสั้นมาก:
+
+8AWG
+
+10AWG
+
+
+
+---
+
+ผังวงจร
+
++8.4V
+         │
+      Fuse 30A
+         │
+   Capacitor Bank
+         │
+  +------+------+
+  |             |
+ MOSFET       TVS
+ Bank         Diode
+  |             |
+  +------+- ----+
+         │
+      Probe +
+         
+Battery -
+         │
+      Probe -
+
+
+---
+
+ถ้าจะใช้ boost จริง
+
+โครงสร้าง:
+
+2S Battery
+   │
+Boost Converter
+(8.4V → 12V)
+   │
+Capacitor Bank
+   │
+MOSFET Welder
+
+แต่ปัญหา:
+
+boost ร้อนหนัก
+
+efficiency ตก
+
+ยิง pulse ไม่ทัน
+
+ช็อตแล้วพังง่าย
+
+
+
+---
+
+สิ่งที่ “ดีกว่า boost”
+
+คนทำจริงนิยม:
+
+supercapacitor
+
+capacitor bank ใหญ่
+
+MOSFET แรงๆ
+
+
+แทน step-up
+
+
+---
+
+หน้าตาวงจรที่นิยม
+
+MOSFET Spot Welder
+
+Capacitor Bank + Probe
+
+รายการอะไหล่ที่แนะนำ
+
+ส่วน	ค่า
+
+แบต	18650 High Drain 2S
+BMS	2S 30A
+MOSFET	IRLB3034 x4
+Capacitor	4700–22000uF Low ESR
+TVS	SMBJ16A
+Driver	TC4420
+Fuse	30A รถยนต์
+สาย	8AWG
+Probe	Copper rod
+
+
+
+---
+
+จุดสำคัญสุด
+
+แบต “มือถือธรรมดา” แม้เขียน 5600mAh:
+
+ไม่ได้แปลว่าจ่ายกระแสสูง
+
+หลายก้อนจ่ายได้แค่ 5–10A
+
+
+spot welder ต้องการ pulse สูงมาก
+
+ดังนั้น:
+
+high drain สำคัญกว่า mAh
+
+resistance ต่ำสำคัญกว่า voltage สูง
+
+
+ถ้าคุณอยาก ผมสามารถวาด:
+
+PCB layout
+
+wiring diagram จริง
+
+วิธีต่อ MOSFET ขนาน
+
+วงจร NE555 pulse
+
+แบบ auto trigger
+
+แบบ supercapacitor
+
+
+ให้เป็นภาพต่อสายได้เลยด้วย
+
+ถ้าจะทำ spot welder จาก “แบตมือถือ 2–3 ก้อน” (Li-ion 4.2V เต็ม) มันทำได้ แต่ต้องเข้าใจก่อนว่า spot welder ต้องใช้ “กระแสพุ่งสูงมาก” ช่วงสั้นๆ ไม่ใช่แค่ mAh เยอะ
+
+แบตมือถือทั่วไป:
+
+จ่ายต่อเนื่องไม่แรงมาก
+
+ถ้าช็อตตรงๆ อาจบวม/ไหม้ได้
+
+
+ดังนั้นวงจรที่นิยมคือ:
+
+ใช้ MOSFET ยิง pulse
+
+ใช้ capacitor ช่วย
+
+หรือใช้แบต high drain
+
+
+
+---
+
+แบบพื้นฐานสุด (นิยมมาก)
+
+ใช้:
+
+แบต 2S หรือ 3S
+
+MOSFET หลายตัวขนาน
+
+ปุ่มยิง pulse
+
+
+โครงสร้าง:
+
+แบต Li-ion
+   │
+BMS
+   │
+Capacitor
+   │
+MOSFET bank
+   │
+หัวเชื่อมทองแดง
+
+
+---
+
+ถ้าใช้แบต 2 ก้อน
+
+2S
+
+ได้:
+
+8.4V เต็ม
+
+แรงพอเชื่อม nickel บางๆ
+
+
+เหมาะกว่า 1S เยอะ
+
+
+---
+
+MOSFET ที่นิยม
+
+พวก:
+
+IRF1404
+
+IRLB3034
+
+AOI518
+
+HY4008
+
+
+ต้องใช้หลายตัวขนานกัน
+
+
+---
+
+วงจรที่นิยม DIY มาก
+
+“Mini Battery Spot Welder”
+
+ใช้:
+
+2S/3S Li-ion
+
+super capacitor บางที
+
+MOSFET trigger
+
+
+ตัวอย่างหน้าตา
+
+
+---
+
+ทำไมต้องใช้ MOSFET
+
+เพราะ:
+
+ปุ่มธรรมดารับกระแสไม่ไหว
+
+จะอาร์คไหม้
+
+MOSFET เปิดได้เร็วมากระดับ ms
+
+
+
+---
+
+ถ้าจะ “ปั่น A”
+
+จริงๆ คือ:
+
+ดึงกระแสสูงช่วงสั้น
+
+ใช้ internal resistance ต่ำ
+
+ใช้สายสั้นมาก
+
+
+ดังนั้น:
+
+แบตมือถือบางก้อนไม่เหมาะ
+
+18650 high drain ดีกว่า
+
+
+
+---
+
+ถ้าจะให้เชื่อมได้จริง
+
+แนะนำ:
+
+2S หรือ 3S
+
+18650 high drain เช่น:
+
+Samsung 25R
+
+Sony VTC5
+
+Molicel
+
+
+
+---
+
+แบบปลอดภัยกว่า
+
+ใช้บอร์ดสำเร็จ:
+
+คำค้น:
+
+12V spot welder board
+MOSFET spot welder module
+DIY battery spot welder board
+
+พวกนี้มี:
+
+timer
+
+auto trigger
+
+pulse control
+
+MOSFET bank มาแล้ว
+
+
+
+---
+
+ตัวอย่างบอร์ด
+
+
+---
+
+สรุปแบบใช้งานได้จริง
+
+แบบ	แนะนำไหม
+
+แบตมือถือ 1S	❌ อ่อน
+แบตมือถือ 2S	⚠️ พอได้
+18650 high drain 2S	✅ ดี
+MOT microwave	✅ แรงมาก
+super capacitor	✅ โปรกว่า
+
+
+
+---
+
+ถ้าคุณจะทำจริง
+
+ผมแนะนำแนวนี้:
+
+2S 18650 high drain
++
+MOSFET spot welder board
++
+สายเชื่อมสั้นมาก
++
+หัวทองแดง
+
+จะง่ายและปลอดภัยกว่า MOT เยอะ และแรงพอเชื่อม nickel 0.1–0.15mm ได้เลย
+```
+<img width="465" height="284" alt="1000009314" src="https://github.com/user-attachments/assets/66949483-6023-4e9e-bf09-f36931fbe858" />
+<img width="465" height="260" alt="1000009316" src="https://github.com/user-attachments/assets/57bd2c80-7128-4e13-bc0c-b18a746d2138" />
