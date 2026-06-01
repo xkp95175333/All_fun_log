@@ -1,8 +1,5 @@
 
----
-AI ออกแบบทั้งหมด
----
-```md
+
 <div align="center">
 
 # ⚡ RvA Calculator
@@ -65,7 +62,7 @@ https://xkp95175333.github.io/All_fun_log/ELec/RvA.html
 
 ELec/RvA.html
 ELec/README.md
-```
+
 
 
 
