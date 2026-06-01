@@ -2,37 +2,7 @@
 ---
 AI ออกแบบทั้งหมด
 ---
-# Battery Formula
-
-Current
-
-```math
-I=\frac{V}{R}
-```
-
-Voltage
-
-```math
-V=IR
-```
-
-Power
-
-```math
-P=\frac{V^2}{R}
-```
-
-Example
-
-```math
-I=\frac{3.7}{10}=0.37A
-```
-
-```math
-P=\frac{3.7^2}{10}=1.37W
-```
-
-
+ 
 
 ---
 สเต็ปอัพMini Dc
