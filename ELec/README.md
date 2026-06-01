@@ -69,8 +69,8 @@ ELec/RvA.html
 ELec/README.md
 
 
+https://github.com/xkp95175333/All_fun_log/tree/xkp95175333/main_sell_hide/ELec
 
-https://github.com/xkp95175333/All_fun_log/edit/xkp95175333/main_sell_hide/ELec/RvA.html
 
 
 [![Open](https://img.shields.io/badge/Open-Web-green?style=for-the-badge)](https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/index.html))
@@ -244,4 +244,11 @@ HW-586 Lib เสริม Unload BP
 
 <img width="1536" height="1024" alt="1000009258" src="https://github.com/user-attachments/assets/a497bc15-48c6-4f0b-8bfb-cf5288f6b8dc" />
 
+
+
+---
+จุดด้วยหม้อแปลงไมโครเวฟ
+---
+
+<img width="720" height="1612" alt="1000009310" src="https://github.com/user-attachments/assets/e22e2824-995f-4c17-8ee4-f88651648063" />
 
