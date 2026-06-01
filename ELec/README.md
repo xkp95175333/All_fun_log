@@ -3,7 +3,7 @@
 ---
 AI ออกแบบทั้งหมด
 ---
-```html
+
 <div align="center">
 
 # ⚡ RvA Calculator
@@ -54,9 +54,9 @@ Click image or button above to open calculator.
 </details>
 
 ---
-```
 
-## 🌐 Live Web
+
+##🌐 Live Web
 
 ```txt
 https://xkp95175333.github.io/All_fun_log/ELec/RvA.html
