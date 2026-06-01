@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Voltage Drop Resistor Calculator</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#101010;
+    color:white;
+    font-family:Arial;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.box{
+    width:90%;
+    max-width:550px;
+    background:#1c1c1c;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.row{
+    margin-bottom:25px;
+}
+
+.label{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+}
+
+input[type=range]{
+    width:100%;
+}
+
+.result{
+    background:#111;
+    padding:20px;
+    border-radius:15px;
+    margin-top:20px;
+}
+
+.big{
+    color:#00ff88;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.lang{
+    text-align:right;
+    margin-bottom:10px;
+}
+
+button{
+    background:#333;
+    color:white;
+    border:none;
+    padding:8px 15px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+footer{
+    text-align:center;
+    margin-top:20px;
+    opacity:0.5;
+}
+
+</style>
+</head>
+<body>
+
+<div class="box">
+
+<div class="lang">
+<button onclick="toggleLang()">TH / EN</button>
+</div>
+
+<h1 id="title">Voltage Drop Resistor</h1>
+
+<div class="row">
+    <div class="label">
+        <span id="vinlabel">Input Voltage</span>
+        <span id="vintext">12V</span>
+    </div>
+
+    <input type="range" id="vin" min="1" max="60" value="12" step="0.1">
+</div>
+
+<div class="row">
+    <div class="label">
+        <span id="voutlabel">Output Voltage</span>
+        <span id="vouttext">5V</span>
+    </div>
+
+    <input type="range" id="vout" min="1" max="60" value="5" step="0.1">
+</div>
+
+<div class="row">
+    <div class="label">
+        <span id="ilabel">Current</span>
+        <span id="itext">1A</span>
+    </div>
+
+    <input type="range" id="i" min="0.1" max="10" value="1" step="0.1">
+</div>
+
+<div class="result">
+
+<div>
+<span id="rlabel">Required Resistance</span><br>
+<span class="big" id="rvalue">0Ω</span>
+</div>
+
+<br>
+
+<div>
+<span id="plabel">Power Dissipation</span><br>
+<span class="big" id="pvalue">0W</span>
+</div>
+
+<br>
+
+<div>
+<span id="wlabel">Recommended Resistor Watt</span><br>
+<span class="big" id="wvalue">0W</span>
+</div>
+
+</div>
+
+<footer>
+Ohm Law / Voltage Divider Tool
+</footer>
+
+</div>
+
+<script>
+
+let thai = false;
+
+function toggleLang(){
+
+    thai = !thai;
+
+    if(thai){
+
+        document.getElementById("title").innerText =
+        "คำนวณตัวต้านทานลดแรงดัน";
+
+        document.getElementById("vinlabel").innerText =
+        "แรงดันไฟเข้า";
+
+        document.getElementById("voutlabel").innerText =
+        "แรงดันที่ต้องการ";
+
+        document.getElementById("ilabel").innerText =
+        "กระแส";
+
+        document.getElementById("rlabel").innerText =
+        "ค่าความต้านทานที่ต้องใช้";
+
+        document.getElementById("plabel").innerText =
+        "กำลังไฟที่สูญเสีย";
+
+        document.getElementById("wlabel").innerText =
+        "แนะนำวัตต์ของตัวต้านทาน";
+
+    }else{
+
+        document.getElementById("title").innerText =
+        "Voltage Drop Resistor";
+
+        document.getElementById("vinlabel").innerText =
+        "Input Voltage";
+
+        document.getElementById("voutlabel").innerText =
+        "Output Voltage";
+
+        document.getElementById("ilabel").innerText =
+        "Current";
+
+        document.getElementById("rlabel").innerText =
+        "Required Resistance";
+
+        document.getElementById("plabel").innerText =
+        "Power Dissipation";
+
+        document.getElementById("wlabel").innerText =
+        "Recommended Resistor Watt";
+
+    }
+
+}
+
+function update(){
+
+    let vin =
+    Number(document.getElementById("vin").value);
+
+    let vout =
+    Number(document.getElementById("vout").value);
+
+    let i =
+    Number(document.getElementById("i").value);
+
+    let r = (vin - vout) / i;
+
+    let p = (vin - vout) * i;
+
+    let w = p * 2;
+
+    if(vout >= vin){
+        r = 0;
+        p = 0;
+        w = 0;
+    }
+
+    document.getElementById("vintext").innerText =
+    vin.toFixed(1) + "V";
+
+    document.getElementById("vouttext").innerText =
+    vout.toFixed(1) + "V";
+
+    document.getElementById("itext").innerText =
+    i.toFixed(1) + "A";
+
+    document.getElementById("rvalue").innerText =
+    r.toFixed(2) + " Ω";
+
+    document.getElementById("pvalue").innerText =
+    p.toFixed(2) + " W";
+
+    document.getElementById("wvalue").innerText =
+    w.toFixed(2) + " W";
+
+}
+
+document.getElementById("vin").oninput = update;
+document.getElementById("vout").oninput = update;
+document.getElementById("i").oninput = update;
+
+update();
+
+</script>
+
+</body>
+  </html>
+  
