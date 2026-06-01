@@ -3,7 +3,6 @@
 AI ออกแบบทั้งหมด
 ---
 https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/index.html
-
 ---
 สเต็ปอัพMini Dc
 ---
