@@ -61,7 +61,7 @@ Click image or button above to open calculator.
 ##🌐 Live Web
 
 ```txt
-https://xkp95175333.github.io/All_fun_log/ELec/RvA.html
+[https://xkp95175333.github.io/All_fun_log/ELec](https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/RvA.html)
 ```
 ---
 
@@ -84,9 +84,7 @@ https://github.com/xkp95175333/All_fun_log/tree/xkp95175333/main_sell_hide/ELec
 
 <a href="https://xkp95175333.github.io/All_fun_log/ELec/RvA.html">
 
-<img
-width="900"
-alt="RvA Calculator"
+<img width="900" alt="RvA Calculator"
 src="https://github.com/user-attachments/assets/961c3088-792f-40c2-a081-2a449a3b1849" />
 
 </a>
@@ -115,7 +113,11 @@ https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/
 ---
 
 <img width="716" height="424" alt="1000009304" src="https://github.com/user-attachments/assets/77c4b0ec-5d38-43e0-8b6f-726afcc936cf" />
-![1000009305](https://github.com/user-attachments/assets/1c306c87-948d-402b-887b-2e1ec34e3cd0)
+
+
+
+<img width="716" height="508" alt="1000009320" src="https://github.com/user-attachments/assets/521f0a1d-4d51-4dc4-aaaa-de9c45eb5ce3" />
+
 
 
 ---
