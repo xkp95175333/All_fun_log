@@ -70,9 +70,37 @@ ELec/README.md
 
 
 
+https://github.com/xkp95175333/All_fun_log/edit/xkp95175333/main_sell_hide/ELec/RvA.html
 
 
 [![Open](https://img.shields.io/badge/Open-Web-green?style=for-the-badge)](https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/index.html))
+
+
+<div align="center">
+
+# ⚡ RvA Calculator
+
+<a href="https://xkp95175333.github.io/All_fun_log/ELec/RvA.html">
+
+<img
+width="900"
+alt="RvA Calculator"
+src="https://github.com/user-attachments/assets/961c3088-792f-40c2-a081-2a449a3b1849" />
+
+</a>
+
+<br><br>
+
+<a href="https://xkp95175333.github.io/All_fun_log/ELec/RvA.html">
+
+<img
+src="https://img.shields.io/badge/OPEN-LIVE_APP-00ff88?style=for-the-badge">
+
+</a>
+
+</div>
+
+
 
 
 
