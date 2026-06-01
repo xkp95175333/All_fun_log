@@ -3,13 +3,6 @@
 ---
 AI ออกแบบทั้งหมด
 ---
----
-ตารางสีพวก type c || usb 2/3
----
-
-<img width="716" height="424" alt="1000009304" src="https://github.com/user-attachments/assets/77c4b0ec-5d38-43e0-8b6f-726afcc936cf" />
-<img width="720" height="1612" alt="1000009305" src="https://github.com/user-attachments/assets/77aac788-f541-4b0a-b068-5ede7917824d" />
-<img width="720" height="1612" alt="1000009303" src="https://github.com/user-attachments/assets/24b2f2d1-f1bd-43cd-b229-f9e89980b347" />
 
 
 
@@ -114,6 +107,17 @@ src="https://img.shields.io/badge/OPEN-LIVE_APP-00ff88?style=for-the-badge">
 
 
 https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/index.html
+
+
+
+---
+ตารางสีพวก type c || usb 2.0/ usb 3.2 
+---
+
+<img width="716" height="424" alt="1000009304" src="https://github.com/user-attachments/assets/77c4b0ec-5d38-43e0-8b6f-726afcc936cf" />
+<img width="720" height="1612" alt="1000009305" src="https://github.com/user-attachments/assets/77aac788-f541-4b0a-b068-5ede7917824d" />
+
+
 ---
 สเต็ปอัพMini Dc
 ---
