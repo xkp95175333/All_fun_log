@@ -2,11 +2,12 @@
 ---
 AI ออกแบบทั้งหมด
 ---
+```md
 <div align="center">
 
-# ⚡ Voltage Drop Resistor Calculator
+# ⚡ RvA Calculator
 
-Interactive Ohm Law Tool
+Voltage Drop / Ohm Law Tool
 
 <br>
 
@@ -19,6 +20,14 @@ src="https://img.shields.io/badge/OPEN-LIVE_APP-00ff88?style=for-the-badge">
 
 <br><br>
 
+<a href="https://xkp95175333.github.io/All_fun_log/ELec/RvA.html">
+
+<img
+width="900"
+src="https://dummyimage.com/1200x500/111111/00ff88&text=RvA+CALCULATOR">
+
+</a>
+
 </div>
 
 ---
@@ -29,57 +38,34 @@ src="https://img.shields.io/badge/OPEN-LIVE_APP-00ff88?style=for-the-badge">
 
 <br>
 
-<div align="center">
+| Function | Support |
+|---|---|
+| Voltage Drop | ✅ |
+| Ohm Law | ✅ |
+| TH / EN | ✅ |
+| Mobile UI | ✅ |
+| GitHub Pages | ✅ |
 
-<table>
-<tr>
-<td align="center">
+<br>
 
-<h2>⚡ RvA Calculator</h2>
-
-Voltage Drop Tool
-
-<br><br>
-
-Input Voltage → Output Voltage
-
-<br><br>
-
-Calculate Required Resistance Ω
-
-<br><br>
-
-<a href="https://xkp95175333.github.io/All_fun_log/ELec/RvA.html">
-
-<img
-src="https://dummyimage.com/900x420/111111/00ff88&text=OPEN+CALCULATOR">
-
-</a>
-
-<br><br>
-
-Click Image To Open
-
-</td>
-</tr>
-</table>
-
-</div>
+Click image or button above to open calculator.
 
 </details>
 
 ---
 
-## 🌐 Direct Link
+## 🌐 Live Web
 
 ```txt
 https://xkp95175333.github.io/All_fun_log/ELec/RvA.html
 
 ---
 
-📁 Source File
+📁 Files
 
 ELec/RvA.html
+ELec/README.md
+```
 
 
 
