@@ -1,75 +1,37 @@
+
 ---
 AI ออกแบบทั้งหมด
 ---
-# Battery Discharge Formula
+# Battery Formula
 
-## Ohm's Law
+Current
 
-Current:
-
-```text
-I = V / R
+```math
+I=\frac{V}{R}
 ```
 
-Voltage:
+Voltage
 
-```text
-V = I × R
+```math
+V=IR
 ```
 
-Resistance:
+Power
 
-```text
-R = V / I
+```math
+P=\frac{V^2}{R}
 ```
 
-## Power Formula
+Example
 
-```text
-P = V × I
+```math
+I=\frac{3.7}{10}=0.37A
 ```
 
-```text
-P = V² / R
+```math
+P=\frac{3.7^2}{10}=1.37W
 ```
 
-```text
-P = I² × R
-```
-
-## Example
-
-Battery Voltage:
-
-```text
-3.7V
-```
-
-Resistor:
-
-```text
-10Ω
-```
-
-Current:
-
-```text
-I = 3.7 / 10
-  = 0.37A
-```
-
-Power:
-
-```text
-P = (3.7 × 3.7) / 10
-  = 1.37W
-```
-
-Recommended resistor:
-
-```text
-10Ω 5W
-```
 
 
 ---
