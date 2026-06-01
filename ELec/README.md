@@ -1,6 +1,76 @@
 ---
 AI ออกแบบทั้งหมด
 ---
+# Battery Discharge Formula
+
+## Ohm's Law
+
+Current:
+
+```text
+I = V / R
+```
+
+Voltage:
+
+```text
+V = I × R
+```
+
+Resistance:
+
+```text
+R = V / I
+```
+
+## Power Formula
+
+```text
+P = V × I
+```
+
+```text
+P = V² / R
+```
+
+```text
+P = I² × R
+```
+
+## Example
+
+Battery Voltage:
+
+```text
+3.7V
+```
+
+Resistor:
+
+```text
+10Ω
+```
+
+Current:
+
+```text
+I = 3.7 / 10
+  = 0.37A
+```
+
+Power:
+
+```text
+P = (3.7 × 3.7) / 10
+  = 1.37W
+```
+
+Recommended resistor:
+
+```text
+10Ω 5W
+```
+
 
 ---
 สเต็ปอัพMini Dc
