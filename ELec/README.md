@@ -3,6 +3,15 @@
 ---
 AI ออกแบบทั้งหมด
 ---
+---
+ตารางสีพวก type c || usb 2/3
+---
+
+<img width="716" height="424" alt="1000009304" src="https://github.com/user-attachments/assets/77c4b0ec-5d38-43e0-8b6f-726afcc936cf" />
+<img width="720" height="1612" alt="1000009305" src="https://github.com/user-attachments/assets/77aac788-f541-4b0a-b068-5ede7917824d" />
+<img width="720" height="1612" alt="1000009303" src="https://github.com/user-attachments/assets/24b2f2d1-f1bd-43cd-b229-f9e89980b347" />
+
+
 
 <div align="center">
 
@@ -250,5 +259,6 @@ HW-586 Lib เสริม Unload BP
 จุดด้วยหม้อแปลงไมโครเวฟ
 ---
 
-<img width="720" height="1612" alt="1000009310" src="https://github.com/user-attachments/assets/e22e2824-995f-4c17-8ee4-f88651648063" />
+<img width="465" height="284" alt="1000009314" src="https://github.com/user-attachments/assets/c8a6855c-1229-43c4-a75f-0bae776e8e83" />
+<img width="465" height="260" alt="1000009316" src="https://github.com/user-attachments/assets/8504a4f0-e4ad-47a4-8e23-d38a1a5831dd" />
 
