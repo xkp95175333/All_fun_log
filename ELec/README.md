@@ -115,7 +115,7 @@ https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/
 ---
 
 <img width="716" height="424" alt="1000009304" src="https://github.com/user-attachments/assets/77c4b0ec-5d38-43e0-8b6f-726afcc936cf" />
-<img width="720" height="1612" alt="1000009305" src="https://github.com/user-attachments/assets/77aac788-f541-4b0a-b068-5ede7917824d" />
+![1000009305](https://github.com/user-attachments/assets/1c306c87-948d-402b-887b-2e1ec34e3cd0)
 
 
 ---
