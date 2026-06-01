@@ -2,6 +2,11 @@
 ---
 AI ออกแบบทั้งหมด
 ---
+
+[![Open](https://img.shields.io/badge/Open-Web-green?style=for-the-badge)](https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/index.html))
+
+
+
 https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/index.html
 ---
 สเต็ปอัพMini Dc
