@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Ohm Calculator</h2>
+
+Voltage:
+<input type="range" id="v" min="1" max="60" value="12">
+<span id="vtext">12</span>V
+
+<br><br>
+
+Resistance:
+<input type="range" id="r" min="1" max="100" value="10">
+<span id="rtext">10</span>Ω
+
+<br><br>
+
+Current:
+<h3 id="result"></h3>
+
+<script>
+function update() {
+
+    let v = Number(document.getElementById("v").value);
+    let r = Number(document.getElementById("r").value);
+
+    document.getElementById("vtext").innerText = v;
+    document.getElementById("rtext").innerText = r;
+
+    document.getElementById("result").innerText =
+        (v / r).toFixed(2) + " A";
+}
+
+document.getElementById("v").oninput = update;
+document.getElementById("r").oninput = update;
+
+update();
+</script>
+
+</body>
+</html>
