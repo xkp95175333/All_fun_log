@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>HW-586 Mobile Tool</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#0f0f0f;
+    color:white;
+    font-family:sans-serif;
+    overflow-x:hidden;
+}
+
+.topbar{
+    width:100%;
+    padding:15px;
+    background:#181818;
+    position:sticky;
+    top:0;
+    z-index:999;
+    border-bottom:1px solid #333;
+}
+
+.topbar h1{
+    font-size:20px;
+}
+
+.container{
+    padding:15px;
+}
+
+.card{
+    background:#1a1a1a;
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:15px;
+    border:1px solid #2a2a2a;
+}
+
+.title{
+    font-size:18px;
+    margin-bottom:15px;
+}
+
+.label{
+    margin-top:10px;
+    margin-bottom:8px;
+    opacity:0.8;
+}
+
+input{
+    width:100%;
+    background:#101010;
+    color:white;
+    border:none;
+    outline:none;
+    padding:14px;
+    border-radius:12px;
+    font-size:18px;
+}
+
+.rangeBox{
+    margin-top:12px;
+}
+
+.slider{
+    width:100%;
+}
+
+button{
+    width:100%;
+    border:none;
+    padding:16px;
+    border-radius:14px;
+    background:#2d7dff;
+    color:white;
+    font-size:18px;
+    margin-top:18px;
+}
+
+.result{
+    margin-top:18px;
+    padding:15px;
+    border-radius:12px;
+    background:#101010;
+    line-height:1.8;
+    font-size:18px;
+}
+
+.big{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.footer{
+    text-align:center;
+    opacity:0.5;
+    padding:20px;
+    font-size:14px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.smallCard{
+    background:#111;
+    padding:12px;
+    border-radius:12px;
+    text-align:center;
+}
+
+.smallCard h3{
+    font-size:14px;
+    opacity:0.7;
+}
+
+.smallCard p{
+    font-size:20px;
+    margin-top:8px;
+}
+
+@media (max-width:480px){
+
+    .topbar h1{
+        font-size:18px;
+    }
+
+    .title{
+        font-size:16px;
+    }
+
+    input{
+        font-size:16px;
+    }
+
+    button{
+        font-size:16px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <h1>HW-586 Mobile Mode</h1>
+</div>
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="title">
+            Ohm Calculator
+        </div>
+
+        <div class="label">
+            Voltage (V)
+        </div>
+
+        <input type="number"
+        id="volt"
+        value="4.2"
+        step="0.1">
+
+        <div class="rangeBox">
+            <input type="range"
+            class="slider"
+            min="1"
+            max="24"
+            step="0.1"
+            value="4.2"
+            id="voltSlider">
+        </div>
+
+        <div class="label">
+            Resistance (Ω)
+        </div>
+
+        <input type="number"
+        id="res"
+        value="7"
+        step="0.1">
+
+        <div class="rangeBox">
+            <input type="range"
+            class="slider"
+            min="0.1"
+            max="50"
+            step="0.1"
+            value="7"
+            id="resSlider">
+        </div>
+
+        <button onclick="calc()">
+            Calculate
+        </button>
+
+        <div class="result" id="out">
+
+            <div class="grid">
+
+                <div class="smallCard">
+                    <h3>Current</h3>
+                    <p id="amp">0 A</p>
+                </div>
+
+                <div class="smallCard">
+                    <h3>Power</h3>
+                    <p id="watt">0 W</p>
+                </div>
+
+            </div>
+
+            <br>
+
+            <div>
+                Formula:
+            </div>
+
+            <div class="big">
+                I = V / R
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="footer">
+    HW-586 Mobile UI
+</div>
+
+<script>
+
+const volt = document.getElementById("volt");
+const res = document.getElementById("res");
+
+const voltSlider = document.getElementById("voltSlider");
+const resSlider = document.getElementById("resSlider");
+
+voltSlider.oninput = () =>{
+    volt.value = voltSlider.value;
+    calc();
+}
+
+resSlider.oninput = () =>{
+    res.value = resSlider.value;
+    calc();
+}
+
+volt.oninput = () =>{
+    voltSlider.value = volt.value;
+    calc();
+}
+
+res.oninput = () =>{
+    resSlider.value = res.value;
+    calc();
+}
+
+function calc(){
+
+    let V = parseFloat(volt.value);
+    let R = parseFloat(res.value);
+
+    if(R <= 0){
+        return;
+    }
+
+    let I = V / R;
+    let P = (V * V) / R;
+
+    document.getElementById("amp").innerText =
+        I.toFixed(2) + " A";
+
+    document.getElementById("watt").innerText =
+        P.toFixed(2) + " W";
+}
+
+calc();
+
+</script>
+
+</body>
+              </html>
