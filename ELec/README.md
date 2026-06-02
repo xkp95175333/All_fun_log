@@ -26,7 +26,7 @@ src="https://img.shields.io/badge/OPEN-LIVE_APP-00ff88?style=for-the-badge">
 <a href="https://xkp95175333.github.io/All_fun_log/ELec/RvA.html">
 
 <img
-width="900"
+width="450"
 src="https://dummyimage.com/1200x500/111111/00ff88&text=RvA+CALCULATOR">
 
 </a>
