@@ -273,3 +273,8 @@ HW-586 Lib เสริม Unload BP
 <img width="465" height="284" alt="1000009314" src="https://github.com/user-attachments/assets/c8a6855c-1229-43c4-a75f-0bae776e8e83" />
 <img width="465" height="260" alt="1000009316" src="https://github.com/user-attachments/assets/8504a4f0-e4ad-47a4-8e23-d38a1a5831dd" />
 
+
+---
+ลืม
+---
+<img width="1536" height="1024" alt="1000009353" src="https://github.com/user-attachments/assets/7ef0f67e-0140-4de3-90a9-35a51f580289" />
