@@ -6,6 +6,10 @@ AI ออกแบบทั้งหมด
 
 
 
+<img width="1402" height="1122" alt="1000009391" src="https://github.com/user-attachments/assets/64faf79c-85a1-45ef-804c-82e63e535b05" />
+
+
+
 <div align="center">
 
 # ⚡ RvA Calculator
