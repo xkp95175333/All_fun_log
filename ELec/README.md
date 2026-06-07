@@ -19,7 +19,7 @@ src="https://github.com/user-attachments/assets/961c3088-792f-40c2-a081-2a449a3b
 
 <br><br>
 
-<a href="https://xkp95175333.github.io/All_fun_log/ELec/RvA.html">
+<a href="[https://github.com/xkp95175333/All_fun_log/blob/e2d09d899e7511478bc63ff70ab9e0a9f9edac30/ELec](https://github.com/xkp95175333/All_fun_log/blob/e2d09d899e7511478bc63ff70ab9e0a9f9edac30/ELec/RvA.html)">
 
 <img
 src="https://img.shields.io/badge/OPEN-LIVE_APP-00ff88?style=for-the-badge">
