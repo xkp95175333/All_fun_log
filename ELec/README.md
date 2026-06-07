@@ -10,78 +10,6 @@ AI ออกแบบทั้งหมด
 
 # ⚡ RvA Calculator
 
-Voltage Drop / Ohm Law Tool
-
-<br>
-
-<a href="https://xkp95175333.github.io/All_fun_log/ELec/RvA.html">
-
-<img
-src="https://img.shields.io/badge/OPEN-LIVE_APP-00ff88?style=for-the-badge">
-
-</a>
-
-<br><br>
-
-<a href="https://xkp95175333.github.io/All_fun_log/ELec/RvA.html">
-
-<img
-width="450"
-src="https://dummyimage.com/1200x500/111111/00ff88&text=RvA+CALCULATOR">
-
-</a>
-
-</div>
-
----
-
-<details>
-
-<summary>📦 Open Preview</summary>
-
-<br>
-
-| Function | Support |
-|---|---|
-| Voltage Drop | ✅ |
-| Ohm Law | ✅ |
-| TH / EN | ✅ |
-| Mobile UI | ✅ |
-| GitHub Pages | ✅ |
-
-<br>
-
-Click image or button above to open calculator.
-
-</details>
-
----
-
-
-##🌐 Live Web
-
-```txt
-[https://xkp95175333.github.io/All_fun_log/ELec](https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/RvA.html)
-```
----
-
-📁 Files
-
-ELec/RvA.html
-ELec/README.md
-
-
-https://github.com/xkp95175333/All_fun_log/tree/xkp95175333/main_sell_hide/ELec
-
-
-
-[![Open](https://img.shields.io/badge/Open-Web-green?style=for-the-badge)](https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/index.html))
-
-
-<div align="center">
-
-# ⚡ RvA Calculator
-
 <a href="https://xkp95175333.github.io/All_fun_log/ELec/RvA.html">
 
 <img width="900" alt="RvA Calculator"
@@ -119,6 +47,7 @@ https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/
 <img width="860" height="349" alt="1000009368" src="https://github.com/user-attachments/assets/346f6de0-e454-4eb9-8559-8d419bcc7fae" />
 <img width="366" height="384" alt="1000009380" src="https://github.com/user-attachments/assets/a32491af-981a-42cf-b044-e29a4d3a7fff" />
 <img width="656" height="384" alt="1000009386" src="https://github.com/user-attachments/assets/667cd41a-53ff-4bbf-b77a-8c63ac361dc8" />
+<img width="495" height="384" alt="1000009370" src="https://github.com/user-attachments/assets/f2578e66-519f-4278-963b-965d46fa75f2" />
 
 ```md
 ภาพรวมก่อน — Type-C มีหลายแบบมาก
