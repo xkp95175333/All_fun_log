@@ -1256,3 +1256,90 @@ edge
 
 
 ```
+---
+How Test PCB LCD
+---
+
+```
+
+
+```
+
+---
+ระบบชิงรอบพัดลมcpu+uno+lm2596s
+---
+
+```md
+
+เยี่ยมเลยครับ 🎯 คุณมีทั้ง โมดูล LM2596S (ตัวแปลงแรงดัน DC‑DC แบบปรับได้) และ Arduino Uno R3 — สองตัวนี้สามารถรวมกันเป็นระบบควบคุมพัดลมอัตโนมัติที่อ่านอุณหภูมิและปรับแรงดันให้พัดลมได้อย่างแม่นยำ  
+
+---
+
+🔧 แนวคิดวงจรรวม
+
+🧩 ส่วนประกอบหลัก
+| ชิ้นส่วน | หน้าที่ |
+|------------|----------|
+| Arduino Uno R3 | อ่านค่าความร้อนจากเซนเซอร์และควบคุม PWM |
+| LM2596S | แปลงแรงดันจากแหล่งจ่ายหลัก (12V) ลงมาเป็นแรงดันพัดลม 5–11.2V |
+| NTC Thermistor 10kΩ | ตรวจจับอุณหภูมิที่ฮีทซิงหรือ MOSFET |
+| พัดลม 12VDC | ระบายความร้อนตามแรงดันที่ Arduino สั่ง |
+| ทรานซิสเตอร์ NPN (เช่น 2N2222) | ขยายสัญญาณ PWM จาก Arduino ไปควบคุม LM2596S หรือ MOSFET |
+| MOSFET (IRLZ44N) | จ่ายไฟให้พัดลมตามสัญญาณควบคุม |
+
+---
+
+⚙️ การต่อวงจร
+1. NTC Thermistor → ต่อเข้าขา A0 ของ Arduino (ใช้แบ่งแรงดันกับ R10kΩ ไปกราวด์)  
+2. PWM Output → ใช้ขา D9 ของ Arduino ไปขับ Transistor NPN  
+3. Transistor Output → ต่อไปยังขา EN หรือ ADJ ของ LM2596S เพื่อปรับแรงดัน  
+4. LM2596S Output → จ่ายไฟให้พัดลม (5V–11.2V)  
+5. พัดลม → ต่อกับเอาต์พุต LM2596S และกราวด์  
+
+---
+
+💻 ตัวอย่างโค้ด Arduino (พร้อมอธิบาย)
+`cpp
+// Auto Fan Control with LM2596S + NTC Sensor
+const int tempPin = A0;     // ขาอ่านค่า NTC
+const int pwmPin  = 9;      // ขา PWM ควบคุมพัดลม
+
+void setup() {
+  pinMode(pwmPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int sensorValue = analogRead(tempPin);
+  float voltage = sensorValue * (5.0 / 1023.0);
+  float tempC = (voltage - 0.5) * 100.0; // สมมติใช้ LM35 หรือเทียบเท่า
+
+  // แปลงอุณหภูมิเป็นระดับ PWM (40°C = 5V, 70°C = 11V)
+  int pwmValue = map(tempC, 40, 70, 100, 255);
+  pwmValue = constrain(pwmValue, 100, 255);
+
+  analogWrite(pwmPin, pwmValue);
+
+  Serial.print("Temp: ");
+  Serial.print(tempC);
+  Serial.print(" °C | PWM: ");
+  Serial.println(pwmValue);
+
+  delay(500);
+}
+`
+
+---
+
+🧠 การทำงาน
+- เมื่ออุณหภูมิ < 40°C → PWM ต่ำ → LM2596S จ่าย ~5V  
+- เมื่ออุณหภูมิ > 70°C → PWM สูง → LM2596S จ่าย ~11V  
+- พัดลมจะเร่งความเร็วตามอุณหภูมิจริง  
+
+---
+
+ถ้าคุณอยากให้ผม วาดวงจรเชื่อมต่อ LM2596S + Arduino + NTC + พัดลม แบบ schematic สำหรับสายอิเล็กทรอนิกส์คอม (อ่านง่ายเหมือนใน Proteus) ผมสามารถสร้างให้ได้เลยครับ  
+
+อยากให้ผมวาดแบบ แนวนอน (เหมือนในโปรแกรม) หรือ แนวตั้ง (เหมือนในหนังสือเรียน) ดีครับ?
+
+```
