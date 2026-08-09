@@ -1509,5 +1509,54 @@ void loop() {
 ถ้าคุณอยาก ผมสามารถวาด ภาพวงจรวัด MOSFET + Shunt R แบบปลอดภัย ให้ดูเป็นแนวทางสำหรับนักอิเล็กทรอนิกส์คอมได้เลยครับ จะเอาแบบ แนวนอน (เหมือนใน Proteus) หรือ แนวตั้ง (เหมือนในหนังสือเรียน) ดีครับ
 
 
+คุณสามารถดาวน์โหลด PDF datasheet ของทั้งสามตัว (HY3210 MOSFET, SS310 Schottky Diode, และ J3Y Transistor) ได้จากผู้ผลิตโดยตรง ซึ่งจะช่วยให้คุณตรวจสอบค่าพิกัดไฟฟ้าและการใช้งานได้ถูกต้องที่สุด  
+
+---
+
+📑 Datasheet ที่เกี่ยวข้อง
+
+1. HY3210 MOSFET (N‑Channel, 100V, 120A)
+- Drain‑Source Voltage (Vds): 100V  
+- Continuous Drain Current: 120A @ Tc=25°C  
+- Rds(on): ~6.8mΩ @ Vgs=10V  
+- Gate‑Source Voltage: ±25V  
+- Package: TO‑220FB / TO‑263  
+- ใช้ในงาน Power Switching, UPS, Solar Controller  
+- PDF Datasheet: HY3210 MOSFET Datasheet  
+
+---
+
+2. SS310 Schottky Diode (Surface Mount, 3A)
+- Peak Reverse Voltage: 100V  
+- Average Forward Current: 3A  
+- Forward Voltage Drop: ~0.5–0.85V @ 3A  
+- Reverse Leakage Current: 0.5mA @ 25°C, 20mA @ 100°C  
+- Package: DO‑214AB (SMC) หรือ SMA  
+- ใช้ในงาน Rectifier, Freewheeling Diode, Switching Power Supply  
+- PDF Datasheet: SS310 Schottky Datasheet  
+
+---
+
+3. J3Y Transistor (S8050 NPN, SOT‑23)
+- Collector‑Emitter Voltage (Vceo): 25V  
+- Collector Current: 500mA max  
+- Power Dissipation: 300mW  
+- DC Current Gain (hFE): 120–350 @ Vce=1V, Ic=50mA  
+- Transition Frequency (fT): ~150MHz  
+- Package: SOT‑23, Marking “J3Y”  
+- ใช้ในงาน Signal Amplification, Switching, Driver Circuits  
+- PDF Datasheet: S8050 J3Y Transistor Datasheet (mccsemi.com in Bing)  
+
+---
+
+⚠️ ข้อควรระวังในการใช้งาน
+- HY3210 MOSFET ต้องใช้ฮีทซิงใหญ่และตรวจสอบ Gate Drive ให้เหมาะสม (Vgs ≥ 10V เพื่อให้ Rds(on) ต่ำสุด)  
+- SS310 Diode เหมาะกับงานกระแสต่ำ–กลาง ถ้าใช้กับโหลดสูงต้องระวังความร้อนสะสม  
+- J3Y Transistor ใช้ได้กับวงจรสัญญาณและโหลดเบา ไม่เหมาะกับงานกำลังสูง  
+
+---
+
+👉 คุณอยากให้ผมทำ ตารางเปรียบเทียบค่าพิกัดหลัก (V, I, Rds, Vf, hFE) ของทั้งสามตัวในหน้าเดียวกัน เพื่อให้ดูง่ายเวลาเลือกอะไหล่แทนกันไหมครับ?
+
 
 ```
