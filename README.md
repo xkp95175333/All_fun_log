@@ -7,7 +7,7 @@ Tool Elec
 ---
 
 
-```md
+
 
 <iframe
     src="https://th.mouser.com/th/technical-resources/conversion-calculators/resistor-color-code-calculator"
@@ -34,4 +34,4 @@ src="https://github.com/xkp95175333/All_fun_log/tree/xkp95175333/main_sell_hide/
 
 
 
-```
+
