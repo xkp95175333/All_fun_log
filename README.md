@@ -3,7 +3,7 @@ Save the function code for later viewing.
 
 
 ---
-Tool Elex
+Tool Elec
 ---
 
 <iframe
