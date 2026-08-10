@@ -23,10 +23,8 @@ Ex2
 
 
 
-<iframe
-src="https://github.com/xkp95175333/All_fun_log/tree/xkp95175333/main_sell_hide/ELec/GetR.htm"
-    width="100%"
-    height="800">
+<iframe src="https://github.com/xkp95175333/All_fun_log/tree/xkp95175333/main_sell_hide/ELec/GetR.htm">
+    
 </iframe>
 
 
