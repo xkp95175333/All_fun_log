@@ -1,4 +1,13 @@
+---
+B12v20ah webpdf
 
+---
+
+```.md
+<src="https://xkp95175333.github.io/All_fun_log/ELec/Battery12VD20Ah_6_DZF_20DataWebPdf.html"/>
+
+
+```
 
 ---
 AI ออกแบบทั้งหมด
@@ -50,7 +59,7 @@ https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/
 <img width="564" height="384" alt="1000009374" src="https://github.com/user-attachments/assets/d27554c5-2ec0-4dd4-b1c8-04e40778c727" />
 <img width="860" height="349" alt="1000009368" src="https://github.com/user-attachments/assets/346f6de0-e454-4eb9-8559-8d419bcc7fae" />
 <img width="366" height="384" alt="1000009380" src="https://github.com/user-attachments/assets/a32491af-981a-42cf-b044-e29a4d3a7fff" />
-<img width="656" height="384" alt="1000009386" src="https://github.com/user-attachments/assets/667cd41a-53ff-4bbf-b77a-8c63ac361dc8" />
+<img width="656" height="384" alt="1000009386" src="https://github.com/user-attachments/assets/667cd41a-53ff-4bbf-b77a-8c63ac361dc8" />you 
 <img width="495" height="384" alt="1000009370" src="https://github.com/user-attachments/assets/f2578e66-519f-4278-963b-965d46fa75f2" />
 
 ```md
