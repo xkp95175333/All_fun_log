@@ -1,3 +1,10 @@
+---
+image pcb
+---
+
+<details>
+<summary>🖼️ คลิกเพื่อดูรูปทั้งหมดแบบขนาดจริง</summary><img width="8160" height="6120" alt="1000009909" src="https://github.com/user-attachments/assets/81694bc3-c9a2-4a39-b199-0c01310ef80b" /><img width="6120" height="8160" alt="1000009908" src="https://github.com/user-attachments/assets/8d783d44-a1e5-415b-820d-95842283ea1f" /><img width="1280" height="2560" alt="1000009817" src="https://github.com/user-attachments/assets/53c8b86a-9556-44f5-a315-8c7c4020465f" /><img width="5124" height="5260" alt="1000009916" src="https://github.com/user-attachments/assets/c73e4d12-d61c-4309-9d48-f3238bc95bc6" /><img width="8160" height="6120" alt="1000009909" src="https://github.com/user-attachments/assets/a512eb6d-0e5b-470f-afeb-48c198a3d9d9" /></details>
+
 
 ---
 โชนต้องสงสัย
@@ -360,6 +367,8 @@ RK6	?	?
 ---
 ข้อมูลดิบpngวงจรและสรุปจากAI
 ---
+
+
 <img width="8160" height="6120" alt="1000009909" src="https://github.com/user-attachments/assets/81694bc3-c9a2-4a39-b199-0c01310ef80b" />
 <img width="6120" height="8160" alt="1000009908" src="https://github.com/user-attachments/assets/8d783d44-a1e5-415b-820d-95842283ea1f" />
 <img width="1280" height="2560" alt="1000009817" src="https://github.com/user-attachments/assets/53c8b86a-9556-44f5-a315-8c7c4020465f" />
