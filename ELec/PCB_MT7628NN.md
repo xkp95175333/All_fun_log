@@ -8,6 +8,10 @@
 <img width="2296" height="4080" alt="1000009642" src="https://github.com/user-attachments/assets/b0818c11-4192-4c35-be33-01e2e3844efd" />
 <img width="1612" height="720" alt="1000009656" src="https://github.com/user-attachments/assets/b00ff746-af23-4bcb-acea-f1e6b52586b5" />
 
+<img width="6120" height="8160" alt="1000010083" src="https://github.com/user-attachments/assets/3270bffb-303c-40da-ac2e-db1398819c85" />
+<img width="6120" height="8160" alt="1000010090" src="https://github.com/user-attachments/assets/c154bb51-3329-4a65-9a29-b96bc7386194" />
+
+
 ```.md
 
 ```
