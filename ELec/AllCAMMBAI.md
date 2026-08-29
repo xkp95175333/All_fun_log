@@ -1,5 +1,12 @@
 
 
+
+<img width="4880" height="3252" alt="1000010122" src="https://github.com/user-attachments/assets/d43150c0-21ac-4507-9f86-61bf7beb3b74" />
+
+
+<img width="4840" height="3100" alt="1000010123" src="https://github.com/user-attachments/assets/fbd4d192-b6e2-48cd-98a1-24b1c2c29e39" />
+
+
 ---
 
 AI GPT 
