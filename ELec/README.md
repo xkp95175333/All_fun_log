@@ -580,3 +580,4 @@ HW-586 Lib เสริม Unload BP
 
 <img width="1536" height="1024" alt="ChatGPT Image 14 ก ย  2569 02_07_23" src="https://github.com/user-attachments/assets/c434ad99-3317-47e0-baa0-c88a6af91ce8" />
 
+<img width="1536" height="1024" alt="Copilot_20260914_033132" src="https://github.com/user-attachments/assets/f6812aed-c0d7-4232-a06f-37db31d3b817" />
