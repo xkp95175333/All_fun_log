@@ -17,6 +17,7 @@ AI ออกแบบทั้งหมด
 
 
 <img width="1402" height="1122" alt="1000009391" src="https://github.com/user-attachments/assets/64faf79c-85a1-45ef-804c-82e63e535b05" />
+<img width="1536" height="1024" alt="Copilot_20260914_033949" src="https://github.com/user-attachments/assets/9d6400da-d18b-42ea-85e9-6be921d067a4" />
 
 
 
@@ -62,6 +63,10 @@ https://github.com/xkp95175333/All_fun_log/blob/xkp95175333/main_sell_hide/ELec/
 <img width="366" height="384" alt="1000009380" src="https://github.com/user-attachments/assets/a32491af-981a-42cf-b044-e29a4d3a7fff" />
 <img width="656" height="384" alt="1000009386" src="https://github.com/user-attachments/assets/667cd41a-53ff-4bbf-b77a-8c63ac361dc8" />you 
 <img width="495" height="384" alt="1000009370" src="https://github.com/user-attachments/assets/f2578e66-519f-4278-963b-965d46fa75f2" />
+
+
+
+
 
 ```md
 ภาพรวมก่อน — Type-C มีหลายแบบมาก
