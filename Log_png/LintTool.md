@@ -166,4 +166,52 @@ MRU
 
 
 ---
+
+โอเค งั้นตัดเรื่องกล้องมือถือและการเชื่อมต่อออกทั้งหมดครับ ใช้ PC Asus Nitro 16 + Windows 11 เป็นหลัก คุณเลือกรูป PNG/JPG จากไฟล์ในเครื่องเอง แล้วให้โปรแกรมดึงข้อความไปกรอกในช่องเว็บได้ทันที
+
+### ตัวที่ผมเลือกให้ลองก่อน
+
+![OCR - Image to Text - Descargar e instalar en Windows | Microsoft Store](https://images.openai.com/static-rsc-4/V8z5wqc0OI7e0CM3aAbLLAPgCaB1GCkOR4fx5hj_FfyASh97r-C_xPIfvTWyg5f7Z31tyCamj42wYHBFYJ3hKqk1scxWEn4E4qpf8A0vG1USq1l0wU4tbKy5UAJ9CM1uP58rDf1nFzPvULwBwTZcf6Ntjk2IgULlFYpNkMatF905kWBvuI7_pXqnddItRUKc?purpose=fullsize)
+
+1\. OCRLing — ใช้ง่าย ไม่ต้องเขียนโปรแกรมก่อน
+
+[GitHub และดาวน์โหลด](https://github.com/marian-platonov/OCRLing?utm_source=chatgpt.com)
+
+* เปิดไฟล์ภาพจาก PC ได้
+
+* OCR ในเครื่องด้วย Tesseract
+
+* คัดลอกข้อความหรือส่งออกไฟล์
+
+* มีเครื่องมือค้นหาข้อความด้วย Regex GitHub
+
+เหมาะกับการทดลองอ่านภาพก่อน แต่การดึง CA/MRU ลงช่องเฉพาะอาจต้องปรับเพิ่ม
+
+![TesseractOCR-GUI | A Simple User Interface for Tesseract OCR Based on WPF/C#.](https://images.openai.com/static-rsc-4/c5eXNynueJyEjM_ZOoIU6uTHkgmIDs73I1POYWIukhQcJq5l-ubeSbcGDGFrOdfTBPXDEEU_gJ2fXnhPCNOI72E1fbrci82zHd-IhN336N8Gi3_TDBRI-MUfsn_SOwq7-2N8IG5eMLzJmRsMpPH3WzRPg_Tf0aJYIsNmS5P1GOO8kq0hsmkVhUkuQzEcICJZ?purpose=fullsize)
+
+2\. OCR Automation — เหมาะกับการต่อยอดกรอกเว็บ
+
+[GitHub และซอร์สโค้ด](https://github.com/DarthSandD/ocr-automation?utm_source=chatgpt.com)
+
+เป็นโปรแกรม C# สำหรับ Windows ที่มีระบบ Import ภาพ, OCR, กฎ Mapping และสั่งพิมพ์ข้อความหรือกดปุ่มในหน้าต่างที่เลือกได้ GitHub
+
+ตัวนี้ตรงเป้าหมายที่สุด หากต้องการแก้โค้ดเพิ่มช่อง CA, MRU และปุ่มกรอกข้อมูลอัตโนมัติ
+
+### ขั้นตอนทำงานที่ควรได้
+
+* กด `เลือกรูปภาพ` แล้วเลือก PNG/JPG จากโฟลเดอร์
+
+* โปรแกรมอ่านข้อความจากภาพ
+
+* แยกข้อมูลที่ต้องการ เช่น CA, MRU และชื่อ
+
+* แสดงแต่ละค่าในช่องข้อความพร้อมปุ่ม `Copy`
+
+* กด `กรอกลงเว็บ` เพื่อใส่ข้อมูลในฟอร์มที่เปิดไว้ โดยตรวจทานก่อนส่งข้อมูล
+
+หมายเหตุ: ซอร์สโค้ดตัวที่สองมีระบบ Mapping อยู่แล้ว แต่การกำหนดกรอบอ่านเฉพาะตำแหน่งและการกรอกฟอร์มตามเว็บของคุณอาจต้องแก้โค้ดเพิ่มเติม ไม่ใช่ฟังก์ชันที่รับประกันว่าตั้งไว้เสร็จแล้ว
+
+ผมแนะนำให้เริ่มจาก OCR Automation เพราะใกล้เคียงกับสิ่งที่คุณต้องการมากที่สุด ไม่ต้องสร้างระบบ OCR ใหม่ตั้งแต่ต้นครับ
+
+
 ```
