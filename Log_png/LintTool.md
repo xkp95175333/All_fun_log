@@ -212,6 +212,50 @@ MRU
 หมายเหตุ: ซอร์สโค้ดตัวที่สองมีระบบ Mapping อยู่แล้ว แต่การกำหนดกรอบอ่านเฉพาะตำแหน่งและการกรอกฟอร์มตามเว็บของคุณอาจต้องแก้โค้ดเพิ่มเติม ไม่ใช่ฟังก์ชันที่รับประกันว่าตั้งไว้เสร็จแล้ว
 
 ผมแนะนำให้เริ่มจาก OCR Automation เพราะใกล้เคียงกับสิ่งที่คุณต้องการมากที่สุด ไม่ต้องสร้างระบบ OCR ใหม่ตั้งแต่ต้นครับ
+เข้าใจแล้วครับ คุณต้องการ ซอร์สโค้ดฟรีและเปิดให้พัฒนาต่อ (Open Source) จาก GitHub ไม่ใช่แค่โปรแกรมสำเร็จรูปให้ดาวน์โหลดมาใช้
+
+สำหรับงานของคุณบน Windows 11 ผมจะเน้นโครงการที่มีซอร์สโค้ดจริง อ่านรูปจาก PC แล้วดึงเฉพาะข้อมูลที่ต้องการออกมาเป็นข้อความ เพื่อก๊อปหรือกรอกลงช่องบนเว็บได้
+
+### ตัวที่ตรงโจทย์ที่สุด
+
+![GitHub - kcow3/AzCvToKb: A playground project written in Windows Forms (.NET Core 3.1) that uses Azure Computer Vision to perform Optical Character Recognition (OCR) on images in the Windows Clipboard. The recognised text can then be copied, or sent to a predefined list of Windows processes via the Keyboard Buffer (SendKeys) method. · GitHub](https://images.openai.com/static-rsc-4/GuAU_0sUW_NiqYwydb-SVZtqNrqxLULUwTJIxg-59Ls6s3CxtHrFUzzX5Hz2Ec1_mZRRetk8GPJhGqK8HLc_A18YWNNCewwLoxhyhPlszZ21KosDBV8kjQlV9fLfcl_E3zklkXv8WrV1wRLmfDK4ry6U6vKv7cPVMpIr56B--xU6slzWRUT-UEGGuw-jsUTX?purpose=fullsize)
+
+1\. OCR Automation — C# / WPF
+
+ตัวเลือกแรก
+
+[ดูซอร์สโค้ดบน GitHub](https://github.com/DarthSandD/ocr-automation?utm_source=chatgpt.com)
+
+* มีโปรเจกต์ C# และไฟล์ Solution สำหรับพัฒนาต่อ
+
+* มี OCR และระบบ Mapping Rules ใน `sample_mappings.json`
+
+* รองรับ Windows 10/11 และทำงานออฟไลน์ได้
+
+เหมาะกับการต่อยอดเป็นช่อง CA, MRU, ชื่อเจ้าของบิล และปุ่มกรอกเว็บ GitHub
+
+![Umi-OCR/README_ja.md at main · hiroi-sora/Umi-OCR · GitHub](https://images.openai.com/static-rsc-4/qytiYIHB4SofKjWeTsEygcCTrczYcZ4nma_n0vZ6qajAu8odOruGIo-bKwrzQKUY8zCnI9pZwbitpfVNGEOllmGKdv4tJdwMXzBSehudMD1Q_-paeshcFKG4o8j4KILwndgSWWeTyRik4Ughfjx1d9j660fpw-06dAVqyyJfJnMB8Qt5kQozlKc1DsSGuIis?purpose=fullsize)
+
+2\. Umi-OCR — ฟรีและมีไลเซนส์ MIT
+
+[ดูซอร์สโค้ด Umi-OCR](https://github.com/hiroi-sora/Umi-OCR?utm_source=chatgpt.com)
+
+มี OCR สำหรับไฟล์ภาพในเครื่อง ส่งออกข้อความและ CSV ได้ และเป็นอีกฐานสำหรับนำระบบอ่านภาพไปต่อยอด แต่การทำช่องข้อมูลเฉพาะและเชื่อมเว็บต้องพัฒนาเพิ่ม localhosted
+
+### สิ่งที่เราจะพัฒนาต่อจากซอร์สโค้ด
+
+* ปุ่มเลือกไฟล์ PNG/JPG จาก PC
+
+* อ่านภาพด้วย OCR
+
+* ดึงข้อมูลเฉพาะที่กำหนด เช่น CA และ MRU ด้วย Regex หรือกำหนดตำแหน่ง
+
+* แสดงข้อความแยกช่อง พร้อมปุ่ม Copy
+
+* เพิ่มปุ่มกรอกข้อมูลลงเว็บที่เปิดอยู่
+
+ผมเลือก OCR Automation เป็นตัวเริ่มต้นให้คุณ เพราะใช้ C# อยู่แล้วและมีระบบ Mapping ที่นำมาต่อยอดได้ อย่างไรก็ตาม ต้องตรวจไลเซนส์ของ repository ก่อนนำไปเผยแพร่หรือใช้เชิงพาณิชย์ และยังต้องแก้โค้ดส่วนเลือกไฟล์ภาพกับฟอร์มให้ตรงงานจริง
+
 
 
 ```
