@@ -3,6 +3,12 @@
 ---
 log
 ---
+#15
+<img width="8160" height="6120" alt="1000011267" src="https://github.com/user-attachments/assets/c1152758-6bbf-4f1e-84ea-bce4a8cde3b1" />
+<img width="8160" height="6120" alt="1000011266" src="https://github.com/user-attachments/assets/3fc3d604-6eb0-48a4-ae99-782c867f6135" />
+<img width="6120" height="8160" alt="1000011265" src="https://github.com/user-attachments/assets/0095691e-83c8-4495-99a2-c104957dd2ee" />
+
+
 
 #13
 <img width="1836" height="4080" alt="1000011264" src="https://github.com/user-attachments/assets/c548ccbd-dc5b-49e9-a296-9a0a8d8b2b87" />
