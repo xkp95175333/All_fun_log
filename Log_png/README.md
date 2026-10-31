@@ -1,3 +1,121 @@
+---
+g2010 remove&port usb 
+
+---
+
+```ps
+
+# Canon G2010 Cleanup - Windows 11
+# Run PowerShell as Administrator
+# Unplug the printer USB cable before running.
+
+$ErrorActionPreference = "Continue"
+
+Write-Host "`n=== Canon G2010 Cleanup ===" -ForegroundColor Cyan
+
+# 1. Backup the current driver list
+$backup = "$env:USERPROFILE\Desktop\CanonG2010_Backup"
+New-Item -ItemType Directory -Path $backup -Force | Out-Null
+
+Get-Printer | Format-List * |
+    Out-File "$backup\Printers.txt"
+
+Get-PrinterDriver | Format-List * |
+    Out-File "$backup\PrinterDrivers.txt"
+
+pnputil /enum-drivers |
+    Out-File "$backup\DriverStore.txt"
+
+# 2. Remove Canon printer queues
+Get-Printer | Where-Object {
+    $_.Name -match "Canon|G2010" -or
+    $_.DriverName -match "Canon|G2010"
+} | ForEach-Object {
+    Write-Host "Removing printer: $($_.Name)"
+    Remove-Printer -Name $_.Name -ErrorAction Continue
+}
+
+# 3. Stop the print spooler
+Stop-Service Spooler -Force -ErrorAction Continue
+
+# 4. Clear stuck print jobs
+Remove-Item "$env:windir\System32\spool\PRINTERS\*" `
+    -Force -ErrorAction SilentlyContinue
+
+# 5. Restart the print spooler
+Start-Service Spooler -ErrorAction Continue
+
+# 6. Remove Canon printer drivers
+Get-PrinterDriver | Where-Object {
+    $_.Name -match "Canon|G2010"
+} | ForEach-Object {
+    Write-Host "Removing driver: $($_.Name)"
+    Remove-PrinterDriver -Name $_.Name -ErrorAction Continue
+}
+
+# 7. Find Canon USB devices
+Write-Host "`n=== Canon USB devices ===" -ForegroundColor Yellow
+
+$devices = Get-PnpDevice -PresentOnly:$false |
+    Where-Object {
+        $_.FriendlyName -match "Canon|G2010" -or
+        $_.InstanceId -match "VID_04A9"
+    }
+
+$devices | Format-Table Status, Class, FriendlyName, InstanceId -AutoSize
+
+Write-Host "`nCleanup complete." -ForegroundColor Green
+Write-Host "Backup saved at: $backup"
+Write-Host "Restart Windows before installing the driver again."
+
+
+```
+---
+spoots remove
+---
+```ps
+
+# Reset Print Spooler - Windows 11
+# Run as Administrator
+
+$ErrorActionPreference = "Continue"
+
+# 1. Stop Print Spooler
+Stop-Service -Name Spooler -Force
+Start-Sleep -Seconds 2
+
+# 2. Clear stuck print jobs
+$spoolPath = "$env:windir\System32\spool\PRINTERS"
+
+Get-ChildItem -Path $spoolPath -Force -ErrorAction SilentlyContinue |
+    Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+
+# 3. Reset Print Spooler service
+sc.exe config Spooler start= auto
+sc.exe failure Spooler reset= 86400 actions= restart/5000/restart/5000/restart/5000
+
+# 4. Start Print Spooler
+Start-Service -Name Spooler
+Start-Sleep -Seconds 2
+
+# 5. Verify service status
+Get-Service -Name Spooler |
+    Format-Table Name, Status, StartType -AutoSize
+
+Write-Host "`nSpooler reset complete." -ForegroundColor Green
+
+
+```
+```
+
+# List Canon printer driver packages
+pnputil /enum-drivers |
+    Select-String -Pattern "Canon" -Context 4,8
+
+
+
+```
+
 <img width="2428" height="1476" alt="image" src="https://github.com/user-attachments/assets/aa06c2c6-4e21-4673-9786-3fcb9b7f905d" />
 
 
