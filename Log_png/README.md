@@ -1,3 +1,16 @@
+
+---
+รายการ USB port 
+---
+```
+Get-PnpDevice -PresentOnly |
+Where-Object {
+    $_.InstanceId -match '^USB' -or
+    $_.FriendlyName -match 'USB|Host Controller|USB4'
+} |
+Format-Table Status, FriendlyName, InstanceId -AutoSize
+
+```
 ---
 g2010 remove&port usb 
 
